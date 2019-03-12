@@ -97,4 +97,97 @@ public interface IJType extends Comparable<IJType>{
 	public default int compareTo(IJType o) {
 		return getName().compareTo(o.getName());
 	}
+	public default boolean isIterable() {
+		return isSubclassOf(Iterable.class);
+	}
+	public default IJType toNullable() {
+		return new IJType() {
+			
+			@Override
+			public JClass resolve() {
+				return IJType.this.resolve();
+			}
+
+			@Override
+			public boolean isEnum() {
+				return IJType.this.isEnum();
+			}
+
+			@Override
+			public boolean isArray() {
+				return IJType.this.isArray();
+			}
+
+			@Override
+			public boolean isPrimitive() {
+				return IJType.this.isPrimitive();
+			}
+
+			@Override
+			public boolean nullable() {
+				return true;
+			}
+
+			@Override
+			public boolean isAnnotationPresent(Class<? extends Annotation> clase) {
+				return IJType.this.isAnnotationPresent(clase);
+			}
+
+			@Override
+			public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+				return IJType.this.getAnnotation(annotationClass);
+			}
+
+			@Override
+			public boolean isSubclassOf(Class<?> clase) {
+				return IJType.this.isSubclassOf(clase);
+			}
+
+			@Override
+			public boolean isSubclassOf(IJType clase) {
+				return IJType.this.isSubclassOf(clase);
+			}
+
+			@Override
+			public boolean is(Class<?>... classes) {
+				return IJType.this.is(classes);
+			}
+
+			@Override
+			public boolean is(IJType... classes) {
+				return IJType.this.is(classes);
+			}
+
+			@Override
+			public String getName() {
+				return IJType.this.getName();
+			}
+
+			@Override
+			public String getSimpleName() {
+				return IJType.this.getSimpleName();
+			}
+
+			@Override
+			public JPackage getPackage() {
+				return IJType.this.getPackage();
+			}
+
+			@Override
+			public String getPackageName() {
+				return IJType.this.getPackageName();
+			}
+
+			@Override
+			public List<JAnnotation> getAnnotations() {
+				return IJType.this.getAnnotations();
+			}
+
+			@Override
+			public List<IJType> getInnerTypes() {
+				return IJType.this.getInnerTypes();
+			}
+			
+		};
+	}
 }
