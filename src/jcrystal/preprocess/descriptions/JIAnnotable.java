@@ -34,7 +34,10 @@ public interface JIAnnotable {
 	public default void ifJAnnotation(Class<? extends Annotation> clase, Consumer<JAnnotation> consumer) {
 		getAnnotations().stream().filter(f->f.name.equals(clase.getName())).findFirst().ifPresent(consumer);
 	}
-	public default <A extends Annotation> void ifAnnotation(Class<A> clase, Consumer<A> consumer) {
-		getAnnotations().stream().filter(f->f.name.equals(clase.getName())).findFirst().ifPresent(a->consumer.accept(getAnnotation(clase)));
+	public default <A extends Annotation> boolean ifAnnotation(Class<A> clase, Consumer<A> consumer) {
+		A annotation = getAnnotation(clase);
+		if(annotation != null)
+			consumer.accept(annotation);
+		return annotation != null;
 	}
 }
