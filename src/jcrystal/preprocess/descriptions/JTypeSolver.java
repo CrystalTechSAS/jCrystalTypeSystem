@@ -16,6 +16,8 @@ public class JTypeSolver{
 	
 	public static Map<String, JType> SIMPLE_TYPES = new TreeMap<>();
 	
+	public static IJType VOID = JTypeSolver.load(Void.TYPE, null);
+	
 	public static IJType STRING = JTypeSolver.load(String.class, null);
 	public static IJType DATE = JTypeSolver.load(Date.class, null);
 	
