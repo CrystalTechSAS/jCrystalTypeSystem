@@ -46,7 +46,7 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		Arrays.stream(clase.getConstructors()).forEach(c->{
 			constructors.add(new JMethod(c));
 		});
-		Arrays.stream(clase.getDeclaredMethods()).sorted((c1,c2)->c1.getName().compareTo(c2.getName())).forEach(m->{
+		Arrays.stream(clase.getDeclaredMethods()).forEach(m->{
 			if(!m.getName().startsWith("lambda$"))
 				methods.add(new JMethod(m));
 		});

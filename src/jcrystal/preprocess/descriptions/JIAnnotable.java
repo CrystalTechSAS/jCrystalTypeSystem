@@ -31,8 +31,8 @@ public interface JIAnnotable {
 	public default <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return AnnotationResolverHolder.CUSTOM_RESOLVER.resolveAnnotation(annotationClass, this);
 	}
-	public default void ifJAnnotation(Class<? extends Annotation> clase, Consumer<JAnnotation> consumer) {
-		getAnnotations().stream().filter(f->f.name.equals(clase.getName())).findFirst().ifPresent(consumer);
+	public default void ifJAnnotation(String name, Consumer<JAnnotation> consumer) {
+		getAnnotations().stream().filter(f->f.name.equals(name)).findFirst().ifPresent(consumer);
 	}
 	public default <A extends Annotation> boolean ifAnnotation(Class<A> clase, Consumer<A> consumer) {
 		A annotation = getAnnotation(clase);

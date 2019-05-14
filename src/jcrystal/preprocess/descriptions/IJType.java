@@ -30,6 +30,10 @@ public interface IJType extends Comparable<IJType>{
 	boolean is(Class<?>... classes);
 
 	boolean is(IJType... classes);
+	
+	default boolean is(String name) {
+		return getName().equals(name) || getSimpleName().equals(name);
+	}
 
 	String getName();
 
