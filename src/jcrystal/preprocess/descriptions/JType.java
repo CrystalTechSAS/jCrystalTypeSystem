@@ -108,7 +108,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 			try {
 				return Class.forName(name).isAnnotationPresent(clase);
 			} catch (ClassNotFoundException e) {
-				System.err.println(name);
 			}
 		return false;
 	}
@@ -123,7 +122,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 			try {
 				return Class.forName(name).getAnnotation(annotationClass);
 			} catch (ClassNotFoundException e) {
-				System.err.println(name);
 			}
 		return null; 
 	}
