@@ -40,4 +40,5 @@ public interface JIAnnotable {
 			consumer.accept(annotation);
 		return annotation != null;
 	}
+	public JAnnotation getJAnnotationWithAncestorCheck(String name);
 }

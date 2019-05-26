@@ -16,29 +16,29 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	public boolean isVoid;
 	public List<JVariable> params = new ArrayList<>();
 	public List<JAnnotation> annotations= new ArrayList<>();
-	public String declaringClass;
+	public JClass declaringClass;
 	
-	public JMethod(Method m) {
+	public JMethod(JClass declaringClass, Method m) {
+		this.declaringClass = declaringClass;
 		modifiers = m.getModifiers();
 		name = m.getName();
 		returnType = JTypeSolver.load(m.getReturnType(), m.getGenericReturnType());
 		isVoid = m.getReturnType() == Void.TYPE;
 		for(Parameter p : m.getParameters()) {
-			params.add(new JVariable(p));
+			params.add(new JVariable(this, p));
 		}
 		loadAnnotations(m.getAnnotations());
-		declaringClass = m.getDeclaringClass().getName();
 	}
-	public JMethod(Constructor<?> m) {
+	public JMethod(JClass declaringClass, Constructor<?> m) {
+		this.declaringClass = declaringClass;
 		modifiers = m.getModifiers();
 		name = m.getName();
 		returnType = null;
 		isVoid = true;
 		for(Parameter p : m.getParameters()) {
-			params.add(new JVariable(p));
+			params.add(new JVariable(this, p));
 		}
 		loadAnnotations(m.getAnnotations());
-		declaringClass = m.getDeclaringClass().getName();
 	}
 	public int getModifiers() {
 		return modifiers;
@@ -51,6 +51,13 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	}
 	public JType getReturnType() {
 		return returnType;
+	}
+	@Override
+	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
+		JAnnotation ret = getJAnnotation(name);
+		if(ret != null)
+			return ret;
+		return declaringClass.getJAnnotationWithAncestorCheck(name);
 	}
 	
 }

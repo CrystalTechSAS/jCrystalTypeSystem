@@ -99,4 +99,8 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	public boolean nullable() {
 		return wrappedType.nullable();
 	}
+	@Override
+	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
+		return wrappedType.getJAnnotationWithAncestorCheck(name);
+	}
 }

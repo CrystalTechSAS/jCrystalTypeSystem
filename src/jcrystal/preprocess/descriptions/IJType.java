@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface IJType extends Comparable<IJType>{
+public interface IJType extends Comparable<IJType>, JIAnnotable{
 
 	JClass resolve();
 
@@ -42,8 +42,6 @@ public interface IJType extends Comparable<IJType>{
 	JPackage getPackage();
 
 	String getPackageName();
-
-	List<JAnnotation> getAnnotations();
 	
 	List<IJType> getInnerTypes();
 
@@ -190,6 +188,11 @@ public interface IJType extends Comparable<IJType>{
 			@Override
 			public List<IJType> getInnerTypes() {
 				return IJType.this.getInnerTypes();
+			}
+
+			@Override
+			public JAnnotation getJAnnotationWithAncestorCheck(String name) {
+				return IJType.this.getJAnnotationWithAncestorCheck(name);
 			}
 			
 		};

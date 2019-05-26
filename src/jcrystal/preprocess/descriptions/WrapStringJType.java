@@ -90,4 +90,8 @@ public class WrapStringJType implements Serializable, IJType{
 	public boolean nullable() {
 		throw new NullPointerException();
 	}
+	@Override
+	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
+		throw new NullPointerException();
+	}
 }

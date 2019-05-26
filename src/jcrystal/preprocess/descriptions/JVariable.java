@@ -15,18 +15,21 @@ public class JVariable implements JIAnnotable, Serializable{
 	public int modifiers;
 	List<JAnnotation> annotations= new ArrayList<>();
 	public String staticDefaultValue;
+	private JIAnnotable parent;
 	public JVariable(int modifiers, JType type, String name) {
 		this.modifiers = modifiers;
 		this.type = type;
 		this.name = name;
 	}
-	public JVariable(Parameter p) {
+	public JVariable(JMethod parent, Parameter p) {
+		this.parent = parent;
 		name = p.getName();
 		type = JTypeSolver.load(p.getType(), p.getParameterizedType());
 		modifiers = p.getModifiers();
 		loadAnnotations(p.getAnnotations());
 	}
-	public JVariable(Field f) {
+	public JVariable(JClass parent, Field f) {
+		this.parent = parent;
 		name = f.getName();
 		type = JTypeSolver.load(f.getType(), f.getGenericType());
 		modifiers = f.getModifiers();
@@ -97,5 +100,12 @@ public class JVariable implements JIAnnotable, Serializable{
 	}
 	public int getModifiers() {
 		return modifiers;
+	}
+	@Override
+	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
+		JAnnotation ret = getJAnnotation(name);
+		if(ret == null && parent != null)
+			ret = parent.getJAnnotationWithAncestorCheck(name);
+		return ret;
 	}
 }

@@ -41,14 +41,14 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 			interfaces.add(JTypeSolver.load(ifaces[e], clase.getGenericInterfaces()[e]));
 		packageName = clase.getPackage().getName();
 		Arrays.stream(clase.getDeclaredFields())/*.sorted((c1,c2)->c1.getName().compareTo(c2.getName()))*/.forEach(f->{
-			attributes.add(new JVariable(f));
+			attributes.add(new JVariable(this, f));
 		});
 		Arrays.stream(clase.getConstructors()).forEach(c->{
-			constructors.add(new JMethod(c));
+			constructors.add(new JMethod(this, c));
 		});
 		Arrays.stream(clase.getDeclaredMethods()).forEach(m->{
 			if(!m.getName().startsWith("lambda$"))
-				methods.add(new JMethod(m));
+				methods.add(new JMethod(this, m));
 		});
 		loadAnnotations(clase.getAnnotations());
 		if(isEnum)
@@ -85,8 +85,5 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		A b = AnnotationResolverHolder.CUSTOM_RESOLVER.resolveAnnotation(annotationClass, this);
 		return b;
-	}
-	public boolean isAnnotationPresentOnAncestor(String annotationName) {
-		return isJAnnotationPresent(annotationName) || (getPackage()!=null && getPackage().isJAnnotationPresent(annotationName));
 	}
 }

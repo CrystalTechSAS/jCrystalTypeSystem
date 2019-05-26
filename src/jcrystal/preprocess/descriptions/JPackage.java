@@ -21,4 +21,8 @@ public class JPackage implements JIAnnotable, Serializable{
 	public String getName() {
 		return name;
 	}
+	@Override
+	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
+		return getJAnnotation(name);
+	}
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,7 @@ public class JType implements JIAnnotable, Serializable, IJType{
 						ParameterizedType pType = (ParameterizedType)tipo;
 						innerTypes.add(JTypeSolver.load((Class<?>)pType.getRawType(), pType));
 					}
+					else if(tipo instanceof WildcardType);
 					else {
 						innerTypes.add(JTypeSolver.load((Class<?>)tipo, null));
 					}
@@ -182,5 +184,15 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	@Override
 	public boolean nullable() {
 		return nullable;
+	}
+	@Override
+	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
+		JAnnotation ret = getJAnnotation(name);
+		if(ret == null) {
+			JPackage p = getPackage();
+			if(p != null)
+				ret = p.getJAnnotationWithAncestorCheck(name);
+		}
+		return ret;
 	}
 }
