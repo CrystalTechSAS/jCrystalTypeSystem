@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import jcrystal.preprocess.convertions.AnnotationResolverHolder;
+import jcrystal.preprocess.utils.Resolver;
 
 public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serializable{
 	private static final long serialVersionUID = 143568675432L;
@@ -53,6 +54,11 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		loadAnnotations(clase.getAnnotations());
 		if(isEnum)
 			enumData = new JEnum(clase);
+	}
+	@Override
+	public boolean isSubclassOf(Class<?> clase) {
+		return super.isSubclassOf(clase) || interfaces.stream().anyMatch(c->c.isSubclassOf(clase)); 
+		
 	}
 	public boolean hasEmptyConstructor() {
 		return constructors.isEmpty() || constructors.stream().anyMatch(f->f.params.isEmpty());

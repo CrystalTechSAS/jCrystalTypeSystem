@@ -128,7 +128,7 @@ public class JType implements JIAnnotable, Serializable, IJType{
 		return null; 
 	}
 	@Override
-	public final boolean isSubclassOf(Class<?> clase) {
+	public boolean isSubclassOf(Class<?> clase) {
 		if(serverType != null)
 			return clase.isAssignableFrom(serverType);
 		return !isPrimitive() && (is(clase) || Resolver.subclassOf(this, clase));
