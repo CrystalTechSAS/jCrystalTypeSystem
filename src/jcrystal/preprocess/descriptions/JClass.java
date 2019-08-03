@@ -16,13 +16,13 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	boolean isStatic;
 	boolean inner;
 	public int modifiers;
-	public List<JType> interfaces = new ArrayList<>();
+	public List<IJType> interfaces = new ArrayList<>();
 	public List<JVariable> attributes = new ArrayList<>();
 	public List<JMethod> methods = new ArrayList<>();
 	public List<JMethod> constructors = new ArrayList<>();
 	public List<JAnnotation> annotations= new ArrayList<>();
 	public JEnum enumData;
-	public JType superClass;
+	public IJType superClass;
 	public IJType declaringClass;
 	
 	public JClass(Class<?> clase){
@@ -78,7 +78,7 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public File getFile(File srcFile){
 		return new File(srcFile, name.replace(".", "/")+".java");
 	}
-	public JType getSuperClass() {
+	public IJType getSuperClass() {
 		return superClass;
 	}
 	public IJType getDeclaringClass() {

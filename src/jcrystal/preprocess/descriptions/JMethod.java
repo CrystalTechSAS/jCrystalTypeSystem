@@ -10,7 +10,7 @@ import java.util.List;
 public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	private static final long serialVersionUID = -202642428369017987L;
 	
-	public JType returnType;
+	public IJType returnType;
 	public String name;
 	public int modifiers;
 	public boolean isVoid;
@@ -49,7 +49,7 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	public String getName() {
 		return name;
 	}
-	public JType getReturnType() {
+	public IJType getReturnType() {
 		return returnType;
 	}
 	@Override
