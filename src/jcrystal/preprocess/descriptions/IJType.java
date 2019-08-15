@@ -2,6 +2,7 @@ package jcrystal.preprocess.descriptions;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public interface IJType extends Comparable<IJType>, JIAnnotable{
@@ -71,7 +72,9 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	        }
 	        return this;
 	}
-
+	public default boolean anyMatch(Predicate<IJType> predicate) {
+		return predicate.test(this) || getInnerTypes().stream().anyMatch(f->f.anyMatch(predicate));
+	}
 	public default boolean isPrimitiveObjectType(){
 		return is(Integer.class, Long.class, Double.class, Float.class, Boolean.class, Character.class, Byte.class, Short.class);
 	}
