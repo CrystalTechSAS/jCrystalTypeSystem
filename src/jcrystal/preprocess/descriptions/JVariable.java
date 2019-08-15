@@ -10,13 +10,13 @@ import java.util.List;
 
 public class JVariable implements JIAnnotable, Serializable{
 	private static final long serialVersionUID = 2251144499897925662L;
-	public JType type;
+	public IJType type;
 	public String name;
 	public int modifiers;
 	List<JAnnotation> annotations= new ArrayList<>();
 	public String staticDefaultValue;
 	private JIAnnotable parent;
-	public JVariable(int modifiers, JType type, String name) {
+	public JVariable(int modifiers, IJType type, String name) {
 		this.modifiers = modifiers;
 		this.type = type;
 		this.name = name;
@@ -77,7 +77,7 @@ public class JVariable implements JIAnnotable, Serializable{
 	public List<JAnnotation> getAnnotations() {
 		return annotations;
 	}
-	public JType getType() {
+	public IJType getType() {
 		return type;
 	}
 	public String getName() {

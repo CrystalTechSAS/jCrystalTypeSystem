@@ -14,7 +14,7 @@ import jcrystal.preprocess.utils.Resolver;
 
 public class JTypeSolver{
 	
-	public static Map<String, JType> SIMPLE_TYPES = new TreeMap<>();
+	public static Map<String, IJType> SIMPLE_TYPES = new TreeMap<>();
 	
 	public static IJType VOID = JTypeSolver.load(Void.TYPE, null);
 	
@@ -39,15 +39,14 @@ public class JTypeSolver{
 	public static IJType OBJ_BYTE = JTypeSolver.load(Byte.class, null);
 	public static IJType OBJ_SHORT = JTypeSolver.load(Short.class, null);
 	
-	
-	public static JType load(Class<?> clase, Type genericType) {
+	public static IJType load(Class<?> clase, Type genericType) {
 		if(genericType == null || genericType instanceof  Class<?> || (genericType instanceof  ParameterizedType && ((ParameterizedType) genericType).getActualTypeArguments().length == 0)) {
-			JType ret = SIMPLE_TYPES.get(clase.getName()); 
+			IJType ret = SIMPLE_TYPES.get(clase.getName()); 
 			if(ret == null)
 				SIMPLE_TYPES.put(clase.getName(), ret = new JType(clase));
 			return ret;
 		}else{
-			JType ret = SIMPLE_TYPES.get(genericType.getTypeName()); 
+			IJType ret = SIMPLE_TYPES.get(genericType.getTypeName()); 
 			if(ret == null)
 				SIMPLE_TYPES.put(genericType.getTypeName(), ret = new JType(clase, genericType));
 			return ret;

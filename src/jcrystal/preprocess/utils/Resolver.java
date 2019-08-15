@@ -21,11 +21,11 @@ public class Resolver {
 		return ret;
 		
 	}
-	public static boolean subclassOf(JType jtype, Class<?> clase) {
-		if(CLASES.containsKey(jtype.name))
-			return subclassOf(CLASES.get(jtype.name), clase);
+	public static boolean subclassOf(IJType jtype, Class<?> clase) {
+		if(CLASES.containsKey(jtype.getName()))
+			return subclassOf(CLASES.get(jtype.getName()), clase);
 		try {
-			Class<?> c = Class.forName(jtype.name);
+			Class<?> c = Class.forName(jtype.getName());
 			return clase.isAssignableFrom(c);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
