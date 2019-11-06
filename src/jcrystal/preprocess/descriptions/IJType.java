@@ -2,6 +2,7 @@ package jcrystal.preprocess.descriptions;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,13 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	boolean isSubclassOf(Class<?> clase);
 
 	boolean isSubclassOf(IJType clase);
+	
+	default boolean isSubclassOf(Class<?>...clases) {
+		for(Class<?> clase : clases)
+			if(isSubclassOf(clase))
+				return true;
+		return false;
+	}
 
 	boolean is(Class<?>... classes);
 
@@ -105,6 +113,14 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	public default boolean isIterable() {
 		return isSubclassOf(Iterable.class);
 	}
+	public default boolean isTupla() {
+		return getSimpleName().startsWith("Tupla");
+	}
+	public default void iterate(Consumer<IJType> consumer) {
+		consumer.accept(this);
+		for(IJType i : getInnerTypes())
+			i.iterate(consumer);
+	}
 	public default IJType toNullable() {
 		return new IJType() {
 			
@@ -146,6 +162,11 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 			@Override
 			public boolean isSubclassOf(Class<?> clase) {
 				return IJType.this.isSubclassOf(clase);
+			}
+			
+			@Override
+			public boolean isSubclassOf(Class<?>...clases) {
+				return IJType.this.isSubclassOf(clases);
 			}
 
 			@Override

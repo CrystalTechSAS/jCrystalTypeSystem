@@ -76,11 +76,11 @@ public class WrapStringJType implements Serializable, IJType{
 	}
 	@Override
 	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {
-		throw new NullPointerException();
+		return false;
 	}
 	@Override
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		throw new NullPointerException();
+		return null;
 	}
 	@Override
 	public String toString() {

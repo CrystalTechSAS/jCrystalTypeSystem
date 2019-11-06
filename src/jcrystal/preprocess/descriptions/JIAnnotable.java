@@ -19,11 +19,21 @@ public interface JIAnnotable {
 			}
 		});
 	}
+	public default boolean isJAnnotationPresent(IJType type) {
+		return type != null && isJAnnotationPresent(type.getName());
+	}
 	public default boolean isJAnnotationPresent(String name) {
 		return getAnnotations().stream().anyMatch(f->f.name.equals(name));
 	}
 	public default boolean isAnnotationPresent(Class<? extends Annotation> clase) {
 		return getAnnotations().stream().anyMatch(f->f.name.equals(clase.getName()));
+	}
+	@SuppressWarnings("unchecked")
+	public default boolean isAnyAnnotationPresent(Class<? extends Annotation>...clases) {
+		for(Class<? extends Annotation> c : clases)
+			if(isAnnotationPresent(c))
+				return true;
+		return false;
 	}
 	public default JAnnotation getJAnnotation(String name) {
 		return getAnnotations().stream().filter(f->f.name.equals(name)).findFirst().orElse(null);

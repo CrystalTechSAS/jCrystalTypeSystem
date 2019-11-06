@@ -2,19 +2,22 @@ package jcrystal.preprocess.descriptions;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	private static final long serialVersionUID = -875202507362620017L;
 
-	private IJType wrappedType;
+	protected IJType wrappedType;
 	private String name;
 	private String simpleName;
-	protected JTypeWrapper(IJType type) {
+	private List<IJType> innerTypes;
+	public JTypeWrapper(IJType type) {
 		this.wrappedType = type;
 		name = type.getName();
 		simpleName = type.getSimpleName();
+		innerTypes = new ArrayList<>(type.getInnerTypes());
 	}
 	public void setName(String name) {
 		this.name = name;
@@ -84,7 +87,7 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public List<IJType> getInnerTypes() {
-		return wrappedType.getInnerTypes();
+		return innerTypes;
 	}
 	@Override
 	public String toString() {
