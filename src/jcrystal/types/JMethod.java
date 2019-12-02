@@ -1,4 +1,4 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+
+import jcrystal.types.loaders.IJClassLoader;
 
 public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	private static final long serialVersionUID = -202642428369017987L;
@@ -18,25 +20,25 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	public List<JAnnotation> annotations= new ArrayList<>();
 	public JClass declaringClass;
 	
-	public JMethod(JClass declaringClass, Method m) {
+	public JMethod(IJClassLoader jClassLoader, JClass declaringClass, Method m) {
 		this.declaringClass = declaringClass;
 		modifiers = m.getModifiers();
 		name = m.getName();
-		returnType = JTypeSolver.load(m.getReturnType(), m.getGenericReturnType());
+		returnType = jClassLoader.load(m.getReturnType(), m.getGenericReturnType());
 		isVoid = m.getReturnType() == Void.TYPE;
 		for(Parameter p : m.getParameters()) {
-			params.add(new JVariable(this, p));
+			params.add(new JVariable(jClassLoader, this, p));
 		}
 		loadAnnotations(m.getAnnotations());
 	}
-	public JMethod(JClass declaringClass, Constructor<?> m) {
+	public JMethod(IJClassLoader jClassLoader, JClass declaringClass, Constructor<?> m) {
 		this.declaringClass = declaringClass;
 		modifiers = m.getModifiers();
 		name = m.getName();
 		returnType = null;
 		isVoid = true;
 		for(Parameter p : m.getParameters()) {
-			params.add(new JVariable(this, p));
+			params.add(new JVariable(jClassLoader, this, p));
 		}
 		loadAnnotations(m.getAnnotations());
 	}

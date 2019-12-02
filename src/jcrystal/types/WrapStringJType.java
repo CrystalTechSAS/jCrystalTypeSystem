@@ -1,16 +1,10 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import jcrystal.preprocess.utils.Resolver;
+import jcrystal.types.loaders.IJClassLoader;
 
 public class WrapStringJType implements Serializable, IJType{
 	private static final long serialVersionUID = -875202507362620017L;
@@ -93,5 +87,9 @@ public class WrapStringJType implements Serializable, IJType{
 	@Override
 	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
 		throw new NullPointerException();
+	}
+	@Override
+	public IJClassLoader classLoader() {
+		return null;
 	}
 }

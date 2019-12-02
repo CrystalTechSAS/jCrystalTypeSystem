@@ -1,10 +1,12 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+
+import jcrystal.types.loaders.IJClassLoader;
+import jcrystal.types.utils.GlobalTypes;
 
 public interface IJType extends Comparable<IJType>, JIAnnotable{
 
@@ -53,30 +55,32 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	String getPackageName();
 	
 	List<IJType> getInnerTypes();
+	
+	IJClassLoader classLoader();
 
 	public default IJType getObjectType(){
 	        switch (getSimpleName()){
-	            case "int": return JTypeSolver.OBJ_INT;
-	            case "long": return JTypeSolver.OBJ_LONG;
-	            case "double": return JTypeSolver.OBJ_DOUBLE;
-	            case "float": return JTypeSolver.OBJ_FLOAT;
-	            case "boolean": return JTypeSolver.OBJ_BOOLEAN;
-	            case "char": return JTypeSolver.OBJ_CHAR;
-	            case "byte": return JTypeSolver.OBJ_BYTE;
-	            case "short": return JTypeSolver.OBJ_SHORT;
+	            case "int": return GlobalTypes.OBJ_INT;
+	            case "long": return GlobalTypes.OBJ_LONG;
+	            case "double": return GlobalTypes.OBJ_DOUBLE;
+	            case "float": return GlobalTypes.OBJ_FLOAT;
+	            case "boolean": return GlobalTypes.OBJ_BOOLEAN;
+	            case "char": return GlobalTypes.OBJ_CHAR;
+	            case "byte": return GlobalTypes.OBJ_BYTE;
+	            case "short": return GlobalTypes.OBJ_SHORT;
 	        }
 	        return this;
 	}
 	public default IJType getPrimitiveType(){
 	        switch (getSimpleName()){
-	      	case "Integer": return JTypeSolver.INT;
-	            case "Long": return JTypeSolver.LONG;
-	            case "Double": return JTypeSolver.DOUBLE;
-	            case "Float": return JTypeSolver.FLOAT;
-	            case "Boolean": return JTypeSolver.BOOLEAN;
-	            case "Character": return JTypeSolver.CHAR;
-	            case "Byte": return JTypeSolver.BYTE;
-	            case "Short": return JTypeSolver.SHORT;
+	      	case "Integer": return GlobalTypes.INT;
+	            case "Long": return GlobalTypes.LONG;
+	            case "Double": return GlobalTypes.DOUBLE;
+	            case "Float": return GlobalTypes.FLOAT;
+	            case "Boolean": return GlobalTypes.BOOLEAN;
+	            case "Character": return GlobalTypes.CHAR;
+	            case "Byte": return GlobalTypes.BYTE;
+	            case "Short": return GlobalTypes.SHORT;
 	        }
 	        return this;
 	}
@@ -88,7 +92,7 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	}
 	
 	public default IJType createListType(boolean nullable) {
-		JType ret = new JType(List.class);
+		JType ret = new JType(classLoader(), List.class);
 		ret.nullable = nullable;
 		ret.innerTypes.add(this);
 		return ret;
@@ -98,7 +102,7 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	}
 	
 	public default IJType createArrayType() {
-		JType ret = new JType();
+		JType ret = new JType(classLoader());
 		ret.isArray = true;
 		ret.primitive = false;
 		ret.nullable = true;
@@ -217,6 +221,11 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 			@Override
 			public JAnnotation getJAnnotationWithAncestorCheck(String name) {
 				return IJType.this.getJAnnotationWithAncestorCheck(name);
+			}
+
+			@Override
+			public IJClassLoader classLoader() {
+				return IJType.this.classLoader();
 			}
 			
 		};

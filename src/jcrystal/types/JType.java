@@ -1,4 +1,4 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jcrystal.preprocess.utils.Resolver;
+import jcrystal.types.loaders.IJClassLoader;
 
 public class JType implements JIAnnotable, Serializable, IJType{
 	private static final long serialVersionUID = -875202507362620017L;
@@ -25,25 +25,29 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	boolean nullable;
 	public List<IJType> innerTypes = new ArrayList<>();
 	private Class<?> serverType;
-	protected JType(Class<?> f, Type genericType) {
-		this(f);
+	public IJClassLoader jClassLoader;
+	public JType(IJClassLoader jClassLoader, Class<?> f, Type genericType) {
+		this(jClassLoader, f);
 		if(!isArray && !isEnum && genericType != null) {
 			if(genericType instanceof  ParameterizedType) {
 				for(Type tipo : ((ParameterizedType) genericType).getActualTypeArguments()) {
 					if(tipo instanceof ParameterizedType) {
 						ParameterizedType pType = (ParameterizedType)tipo;
-						innerTypes.add(JTypeSolver.load((Class<?>)pType.getRawType(), pType));
+						innerTypes.add(jClassLoader.load((Class<?>)pType.getRawType(), pType));
 					}
 					else if(tipo instanceof WildcardType);
 					else {
-						innerTypes.add(JTypeSolver.load((Class<?>)tipo, null));
+						innerTypes.add(jClassLoader.load((Class<?>)tipo, null));
 					}
 				}	
 			}
 		}
 	}
-	JType() {}
-	public JType(String name) {
+	JType(IJClassLoader jClassLoader){
+		this.jClassLoader = jClassLoader;
+	}
+	public JType(IJClassLoader jClassLoader, String name) {
+		this.jClassLoader = jClassLoader;
 		this.name = name;
 		this.nullable = true;
 		if(name.indexOf('.') >= 0) {
@@ -54,7 +58,8 @@ public class JType implements JIAnnotable, Serializable, IJType{
 			this.packageName = null;
 		}
 	}
-	protected JType(Class<?> f) {
+	public JType(IJClassLoader jClassLoader, Class<?> f) {
+		this.jClassLoader = jClassLoader;
 		name = f.getName();
 		simpleName = f.getSimpleName();
 		if(f.getPackage() != null)
@@ -65,7 +70,7 @@ public class JType implements JIAnnotable, Serializable, IJType{
 		nullable = !f.isPrimitive();
 		if(!name.startsWith("java.")) {
 			if(isArray)
-				innerTypes.add(new JType(f.getComponentType(), (Type)null));
+				innerTypes.add(new JType(jClassLoader, f.getComponentType(), (Type)null));
 		}
 		CodeSource src = f.getProtectionDomain().getCodeSource();
 		if(!isArray) {
@@ -82,10 +87,10 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public JClass resolve() {
-		JClass ret = Resolver.loadClass(name);
-		if(ret == null)
-			throw new NullPointerException("Clase no encontrada: " + name);
-		return ret;
+		IJType ret = jClassLoader.forName(name);
+		if(ret == null || !(ret instanceof JClass))
+			throw new NullPointerException("Class not found: " + name);
+		return (JClass)ret;
 	}
 	@Override
 	public final boolean isEnum() {
@@ -100,12 +105,19 @@ public class JType implements JIAnnotable, Serializable, IJType{
 		return primitive;
 	}
 	@Override
+	public IJClassLoader classLoader() {
+		return jClassLoader;
+	}
+	@Override
 	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {
 		if(serverType != null)
 			return serverType.isAnnotationPresent(clase);
-		JClass c = Resolver.loadClass(name);
-		if(c != null)
-			return c.isAnnotationPresent(clase);
+		if(jClassLoader != null) {
+			IJType c = jClassLoader.forName(name);
+			//If we get a reference for a type, we try to get the class
+			if(c != null && c instanceof JClass)
+				return c.isAnnotationPresent(clase);
+		}
 		if(!primitive)
 			try {
 				return Class.forName(name).isAnnotationPresent(clase);
@@ -117,9 +129,11 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		if(serverType != null)
 			return serverType.getAnnotation(annotationClass);
-		JClass c = Resolver.loadClass(name);
-		if(c != null)
-			return c.getAnnotation(annotationClass);
+		if(jClassLoader != null) {
+			IJType c = jClassLoader.forName(name);
+			if(c != null && c instanceof JClass)
+				return c.getAnnotation(annotationClass);
+		}
 		if(!primitive)
 			try {
 				return Class.forName(name).getAnnotation(annotationClass);
@@ -131,7 +145,7 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	public boolean isSubclassOf(Class<?> clase) {
 		if(serverType != null)
 			return clase.isAssignableFrom(serverType);
-		return !isPrimitive() && (is(clase) || Resolver.subclassOf(this, clase));
+		return !isPrimitive() && (is(clase) || (jClassLoader != null && jClassLoader.subclassOf(this, clase)));
 	}
 	public boolean isSubclassOf(Class<?>...clases) {
 		for(Class<?> clase : clases)
@@ -141,7 +155,7 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public final boolean isSubclassOf(IJType clase) {
-		return !isPrimitive() && (is(clase) || Resolver.subclassOf(this, clase));
+		return !isPrimitive() && (is(clase) || (jClassLoader != null && jClassLoader.subclassOf(this, clase)));
 	}
 	@Override
 	public final boolean is(Class<?> ... classes) {
@@ -163,7 +177,7 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public JPackage getPackage() {
-		return Resolver.PACKAGES.get(packageName);
+		return jClassLoader.packageForName(packageName);
 	}
 	@Override
 	public final String getPackageName() {
@@ -172,11 +186,13 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	@Override
 	public List<JAnnotation> getAnnotations() {
 		if(serverType != null)
-			return Collections.EMPTY_LIST;
-		JClass clase = Resolver.loadClass(getName());
-		if(clase == null)
-			return Collections.EMPTY_LIST;
-		return clase.annotations;
+			return Collections.emptyList();
+		if(jClassLoader != null) {
+			IJType c = jClassLoader.forName(name);
+			if(c != null && c instanceof JClass)
+				return ((JClass)c).annotations;
+		}
+		return Collections.emptyList();
 	}
 	@Override
 	public String toString() {

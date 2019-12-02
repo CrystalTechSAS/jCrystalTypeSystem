@@ -1,4 +1,4 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -7,6 +7,8 @@ import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import jcrystal.types.loaders.IJClassLoader;
 
 public class JVariable implements JIAnnotable, Serializable{
 	private static final long serialVersionUID = 2251144499897925662L;
@@ -21,17 +23,17 @@ public class JVariable implements JIAnnotable, Serializable{
 		this.type = type;
 		this.name = name;
 	}
-	public JVariable(JMethod parent, Parameter p) {
+	public JVariable(IJClassLoader jClassLoader, JMethod parent, Parameter p) {
 		this.parent = parent;
 		name = p.getName();
-		type = JTypeSolver.load(p.getType(), p.getParameterizedType());
+		type = jClassLoader.load(p.getType(), p.getParameterizedType());
 		modifiers = p.getModifiers();
 		loadAnnotations(p.getAnnotations());
 	}
-	public JVariable(JClass parent, Field f) {
+	public JVariable(IJClassLoader jClassLoader, JClass parent, Field f) {
 		this.parent = parent;
 		name = f.getName();
-		type = JTypeSolver.load(f.getType(), f.getGenericType());
+		type = jClassLoader.load(f.getType(), f.getGenericType());
 		modifiers = f.getModifiers();
 		Arrays.stream(f.getAnnotations()).sorted((c1,c2)->c1.annotationType().getName().compareTo(c2.annotationType().getName())).forEach(a->{
 			try {

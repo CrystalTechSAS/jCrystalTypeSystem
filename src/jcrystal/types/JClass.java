@@ -1,4 +1,4 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.io.File;
 import java.io.Serializable;
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jcrystal.preprocess.convertions.AnnotationResolverHolder;
-import jcrystal.preprocess.utils.Resolver;
+import jcrystal.types.convertions.AnnotationResolverHolder;
+import jcrystal.types.loaders.IJClassLoader;
 
 public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serializable{
 	private static final long serialVersionUID = 143568675432L;
@@ -25,8 +25,8 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public IJType superClass;
 	public IJType declaringClass;
 	
-	public JClass(Class<?> clase){
-		super(clase);
+	public JClass(IJClassLoader jClassLoader, Class<?> clase){
+		super(jClassLoader, clase);
 		modifiers = clase.getModifiers();
 		name = clase.getName();
 		simpleName = clase.getSimpleName();
@@ -34,26 +34,26 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		isStatic = Modifier.isStatic(clase.getModifiers());
 		inner = clase.isMemberClass();
 		if(clase.getSuperclass() != null)
-			superClass = JTypeSolver.load(clase.getSuperclass(), clase.getGenericSuperclass());
+			superClass = jClassLoader.load(clase.getSuperclass(), clase.getGenericSuperclass());
 		if(clase.getDeclaringClass() != null)
-			declaringClass = JTypeSolver.load(clase.getDeclaringClass(), null);
+			declaringClass = jClassLoader.load(clase.getDeclaringClass(), null);
 		Class<?>[] ifaces = clase.getInterfaces();
 		for(int e = 0; e < ifaces.length; e++)
-			interfaces.add(JTypeSolver.load(ifaces[e], clase.getGenericInterfaces()[e]));
+			interfaces.add(jClassLoader.load(ifaces[e], clase.getGenericInterfaces()[e]));
 		packageName = clase.getPackage().getName();
 		Arrays.stream(clase.getDeclaredFields())/*.sorted((c1,c2)->c1.getName().compareTo(c2.getName()))*/.forEach(f->{
-			attributes.add(new JVariable(this, f));
+			attributes.add(new JVariable(jClassLoader, this, f));
 		});
 		Arrays.stream(clase.getConstructors()).forEach(c->{
-			constructors.add(new JMethod(this, c));
+			constructors.add(new JMethod(jClassLoader, this, c));
 		});
 		Arrays.stream(clase.getDeclaredMethods()).forEach(m->{
 			if(!m.getName().startsWith("lambda$"))
-				methods.add(new JMethod(this, m));
+				methods.add(new JMethod(jClassLoader, this, m));
 		});
 		loadAnnotations(clase.getAnnotations());
 		if(isEnum)
-			enumData = new JEnum(clase);
+			enumData = new JEnum(jClassLoader, clase);
 	}
 	@Override
 	public boolean isSubclassOf(Class<?> clase) {

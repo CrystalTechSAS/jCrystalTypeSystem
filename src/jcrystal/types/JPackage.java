@@ -1,4 +1,4 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;

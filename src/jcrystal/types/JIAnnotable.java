@@ -1,11 +1,11 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import jcrystal.preprocess.convertions.AnnotationResolverHolder;
+import jcrystal.types.convertions.AnnotationResolverHolder;
 
 public interface JIAnnotable {
 	public List<JAnnotation> getAnnotations();

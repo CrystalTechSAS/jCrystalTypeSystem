@@ -1,10 +1,12 @@
-package jcrystal.preprocess.descriptions;
+package jcrystal.types;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import jcrystal.types.loaders.IJClassLoader;
 
 public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	private static final long serialVersionUID = -875202507362620017L;
@@ -105,5 +107,9 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	@Override
 	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
 		return wrappedType.getJAnnotationWithAncestorCheck(name);
+	}
+	@Override
+	public IJClassLoader classLoader() {
+		return wrappedType.classLoader();
 	}
 }
