@@ -9,6 +9,9 @@ public class JPackage implements JIAnnotable, Serializable{
 	private static final long serialVersionUID = -5704843477884875405L;
 	String name;
 	List<JAnnotation> annotations= new ArrayList<>();
+	public JPackage(String paquete){
+		name = paquete;
+	}
 	public JPackage(Package paquete){
 		name = paquete.getName();
 		for(Annotation a : paquete.getAnnotations())
