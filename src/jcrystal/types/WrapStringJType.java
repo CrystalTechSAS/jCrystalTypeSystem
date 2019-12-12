@@ -14,35 +14,41 @@ public class WrapStringJType implements Serializable, IJType{
 	}
 	@Override
 	public JClass resolve() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public boolean isEnum() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public boolean isArray() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public boolean isPrimitive() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public boolean isSubclassOf(Class<?> clase) {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public boolean isSubclassOf(IJType clase) {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public boolean is(Class<?>... classes) {
-		throw new NullPointerException();
+		for(Class<?> c : classes)
+			if(c.getName().equals(type))
+				return true;
+		return false;
 	}
 	@Override
 	public boolean is(IJType... classes) {
-		throw new NullPointerException();
+		for(IJType c : classes)
+			if(c.getName().equals(type))
+				return true;
+		return false;
 	}
 	@Override
 	public String getName() {
@@ -54,19 +60,19 @@ public class WrapStringJType implements Serializable, IJType{
 	}
 	@Override
 	public JPackage getPackage() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public String getPackageName() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public List<IJType> getInnerTypes() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public List<JAnnotation> getAnnotations() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {
@@ -82,11 +88,11 @@ public class WrapStringJType implements Serializable, IJType{
 	}
 	@Override
 	public boolean nullable() {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
-		throw new NullPointerException();
+		throw new NullPointerException(type);
 	}
 	@Override
 	public IJClassLoader classLoader() {
