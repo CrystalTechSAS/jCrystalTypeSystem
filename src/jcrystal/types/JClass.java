@@ -40,8 +40,9 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		Class<?>[] ifaces = clase.getInterfaces();
 		for(int e = 0; e < ifaces.length; e++)
 			interfaces.add(jClassLoader.load(ifaces[e], clase.getGenericInterfaces()[e]));
-		packageName = clase.getPackage().getName();
-		Arrays.stream(clase.getDeclaredFields())/*.sorted((c1,c2)->c1.getName().compareTo(c2.getName()))*/.forEach(f->{
+		if(clase.getPackage() != null)
+			packageName = clase.getPackage().getName();
+		Arrays.stream(clase.getDeclaredFields()).forEach(f->{
 			attributes.add(new JVariable(jClassLoader, this, f));
 		});
 		Arrays.stream(clase.getConstructors()).forEach(c->{
