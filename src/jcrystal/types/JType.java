@@ -25,6 +25,10 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	boolean nullable;
 	public List<IJType> innerTypes = new ArrayList<>();
 	public IJClassLoader jClassLoader;
+	/**
+	 * True if this Type comes from a Java file written by coder.
+	 */
+	public boolean isClientType;
 	public JType(IJClassLoader jClassLoader, Class<?> f, Type genericType) {
 		this(jClassLoader, f);
 		if(!isArray && !isEnum && genericType != null) {
@@ -70,13 +74,9 @@ public class JType implements JIAnnotable, Serializable, IJType{
 		if(!name.startsWith("java.")) {
 			if(isArray)
 				innerTypes.add(new JType(jClassLoader, f.getComponentType(), (Type)null));
-		}
-		CodeSource src = f.getProtectionDomain().getCodeSource();
-		if(!isArray) {
-			if (src != null) {
-				System.out.println(name + " : " + src.getLocation().toString());
-			}else {
-				System.out.println(name+" : null");
+			else{
+				CodeSource src = f.getProtectionDomain().getCodeSource();
+				isClientType = src != null && src.getLocation().toString().endsWith("WEB-INF/classes/");
 			}
 		}
 	}

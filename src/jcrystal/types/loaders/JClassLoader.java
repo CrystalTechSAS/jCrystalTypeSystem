@@ -13,6 +13,8 @@ public class JClassLoader implements IJClassLoader, Serializable{
 
 	private static final long serialVersionUID = -7756184243183779455L;
 	
+	public IJClassLoader parentClassLoader;
+	
 	TreeMap<String, IJType> loadedClasses = new TreeMap<>();
 	TreeMap<String, JPackage> loadedPackages = new TreeMap<>();
 	
@@ -60,5 +62,8 @@ public class JClassLoader implements IJClassLoader, Serializable{
 	public void load(IJType type) {
 		loadedClasses.put(type.getName(), type);
 	}
-	
+	@Override
+	public IJClassLoader getParentClassLoader() {
+		return parentClassLoader;
+	}
 }

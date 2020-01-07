@@ -27,13 +27,8 @@ public interface IJClassLoader {
 		IJType loaded = getLoadedClasses().get(jtype.getName());
 		if(loaded != null && loaded instanceof JClass)
 			return subclassOf((JClass)loaded, clase);
-		try {
-			Class<?> c = Class.forName(jtype.getName());
-			return clase.isAssignableFrom(c);
-		} catch (ClassNotFoundException e) {
-			//e.printStackTrace();
-			//TODO: Hacer mas eficiente esta operacion
-		}
+		if(getParentClassLoader() != null)
+			return getParentClassLoader().subclassOf(jtype, clase);
 		return false;
 	}
 	public default boolean subclassOf(IJType jtype, IJType clase) {
@@ -56,15 +51,13 @@ public interface IJClassLoader {
 	public default boolean isAnnotationPresent(JType jtype, Class<? extends Annotation> annotation) {
 		if(getLoadedClasses().containsKey(jtype.name))
 			return getLoadedClasses().get(jtype.name).isAnnotationPresent(annotation);
-		try {
-			Class<?> c = Class.forName(jtype.name);
-			return c.isAnnotationPresent(annotation);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		if(getParentClassLoader() != null)
+			return getParentClassLoader().isAnnotationPresent(jtype, annotation);
 		return false;
 	}
 	
 	public void load(IJType type);
 	public void load(JPackage jPackage);
+	
+	public IJClassLoader getParentClassLoader();
 }
