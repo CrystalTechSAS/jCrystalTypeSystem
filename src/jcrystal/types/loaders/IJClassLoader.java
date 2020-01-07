@@ -10,7 +10,6 @@ import jcrystal.types.JPackage;
 import jcrystal.types.JType;
 
 public interface IJClassLoader {
-
 	public IJType load(Class<?> clase, Type genericType);
 	public TreeMap<String, IJType> getLoadedClasses();
 	public TreeMap<String, JPackage> getLoadedPackages();
@@ -19,6 +18,10 @@ public interface IJClassLoader {
 	public JPackage packageForName(String name);
 	
 	public default boolean subclassOf(IJType jtype, Class<?> clase) {
+		if(jtype.getName().equals(clase.getName()))//Equivalencia
+			return true;
+		if(jtype.getName().equals("java.lang.Object"))//0
+			return false;
 		if(jtype instanceof JClass)
 			return subclassOf((JClass)jtype, clase);
 		IJType loaded = getLoadedClasses().get(jtype.getName());
@@ -28,7 +31,8 @@ public interface IJClassLoader {
 			Class<?> c = Class.forName(jtype.getName());
 			return clase.isAssignableFrom(c);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			//TODO: Hacer mas eficiente esta operacion
 		}
 		return false;
 	}
