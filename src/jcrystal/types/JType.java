@@ -24,7 +24,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	boolean primitive;
 	boolean nullable;
 	public List<IJType> innerTypes = new ArrayList<>();
-	private Class<?> serverType;
 	public IJClassLoader jClassLoader;
 	public JType(IJClassLoader jClassLoader, Class<?> f, Type genericType) {
 		this(jClassLoader, f);
@@ -75,10 +74,9 @@ public class JType implements JIAnnotable, Serializable, IJType{
 		CodeSource src = f.getProtectionDomain().getCodeSource();
 		if(!isArray) {
 			if (src != null) {
-				if(src.getLocation().toString().endsWith("appengine-api.jar") || src.getLocation().toString().endsWith("json-20160212.jar") || src.getLocation().toString().endsWith("appengine-gcs-client-0.7.jar"))
-					serverType = f;
+				System.out.println(name + " : " + src.getLocation().toString());
 			}else {
-				serverType = f;
+				System.out.println(name+" : null");
 			}
 		}
 	}
@@ -110,8 +108,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {
-		if(serverType != null)
-			return serverType.isAnnotationPresent(clase);
 		if(jClassLoader != null) {
 			IJType c = jClassLoader.forName(name);
 			//If we get a reference for a type, we try to get the class
@@ -127,8 +123,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		if(serverType != null)
-			return serverType.getAnnotation(annotationClass);
 		if(jClassLoader != null) {
 			IJType c = jClassLoader.forName(name);
 			if(c != null && c instanceof JClass)
@@ -143,8 +137,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public boolean isSubclassOf(Class<?> clase) {
-		if(serverType != null)
-			return clase.isAssignableFrom(serverType);
 		return !isPrimitive() && (is(clase) || (jClassLoader != null && jClassLoader.subclassOf(this, clase)));
 	}
 	public boolean isSubclassOf(Class<?>...clases) {
@@ -185,8 +177,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public List<JAnnotation> getAnnotations() {
-		if(serverType != null)
-			return Collections.emptyList();
 		if(jClassLoader != null) {
 			IJType c = jClassLoader.forName(name);
 			if(c != null && c instanceof JClass)
