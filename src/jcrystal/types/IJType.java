@@ -125,6 +125,9 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 		for(IJType i : getInnerTypes())
 			i.iterate(consumer);
 	}
+	public default String prefixName(String prefix) {
+		return getPackageName()+"."+prefix+getSimpleName();
+	}
 	public default IJType toNullable() {
 		return new IJType() {
 			
