@@ -92,7 +92,12 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	}
 	
 	public default IJType createListType(boolean nullable) {
-		JType ret = new JType(classLoader(), List.class);
+		JType ret = new JType(classLoader(), List.class) {
+			@Override
+			public boolean isIterable() {
+				return true;
+			}
+		};
 		ret.nullable = nullable;
 		ret.innerTypes.add(this);
 		return ret;
