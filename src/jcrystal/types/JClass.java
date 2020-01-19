@@ -93,4 +93,8 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		A b = AnnotationResolverHolder.CUSTOM_RESOLVER.resolveAnnotation(annotationClass, this);
 		return b;
 	}
+	@Override
+	public final JClass resolve() {
+		return this;
+	}
 }
