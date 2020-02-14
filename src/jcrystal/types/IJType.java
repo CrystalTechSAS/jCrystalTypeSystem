@@ -3,6 +3,7 @@ package jcrystal.types;
 import java.lang.annotation.Annotation;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import jcrystal.types.loaders.IJClassLoader;
@@ -10,7 +11,20 @@ import jcrystal.types.utils.GlobalTypes;
 
 public interface IJType extends Comparable<IJType>, JIAnnotable{
 
-	JClass resolve();
+	default JClass resolve() {
+		JClass ret = this.tryResolve();
+		if(ret == null)
+			throw new NullPointerException("Class not found: " + getName());
+		return ret;
+	}
+	default <R> R resolve(Function<JClass, R> f) {
+		JClass ret = this.tryResolve();
+		if(ret == null)
+			return null;
+		return f.apply(ret);
+	}
+	
+	JClass tryResolve();
 
 	boolean isEnum();
 
@@ -139,6 +153,11 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 			@Override
 			public JClass resolve() {
 				return IJType.this.resolve();
+			}
+			
+			@Override
+			public JClass tryResolve() {
+				return IJType.this.tryResolve();
 			}
 
 			@Override

@@ -9,6 +9,8 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import jcrystal.types.loaders.IJClassLoader;
@@ -25,6 +27,7 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	boolean nullable;
 	public List<IJType> innerTypes = new ArrayList<>();
 	public IJClassLoader jClassLoader;
+	public Map<String, Annotation> annotations;
 	/**
 	 * True if this Type comes from a Java file written by coder.
 	 */
@@ -83,11 +86,17 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	public List<IJType> getInnerTypes() {
 		return innerTypes;
 	}
+	public <T extends Annotation> JType addAnnotation(T annotation) {
+		if(annotations == null)
+			annotations = new TreeMap<>();
+		annotations.put(annotation.annotationType().getName(), annotation);
+		return this;
+	}
 	@Override
-	public JClass resolve() {
+	public JClass tryResolve() {
 		IJType ret = jClassLoader.forName(name);
 		if(ret == null || !(ret instanceof JClass))
-			throw new NullPointerException("Class not found: " + name);
+			return null;
 		return (JClass)ret;
 	}
 	@Override
@@ -114,6 +123,8 @@ public class JType implements JIAnnotable, Serializable, IJType{
 			if(c != null && c instanceof JClass)
 				return c.isAnnotationPresent(clase);
 		}
+		if(annotations != null && annotations.containsKey(clase.getName()))
+			return true;
 		if(!primitive)
 			try {
 				return Class.forName(name).isAnnotationPresent(clase);
@@ -128,6 +139,8 @@ public class JType implements JIAnnotable, Serializable, IJType{
 			if(c != null && c instanceof JClass)
 				return c.getAnnotation(annotationClass);
 		}
+		if(annotations != null && annotations.containsKey(annotationClass.getName()))
+			return (A)annotations.get(annotationClass.getName());
 		if(!primitive)
 			try {
 				return Class.forName(name).getAnnotation(annotationClass);

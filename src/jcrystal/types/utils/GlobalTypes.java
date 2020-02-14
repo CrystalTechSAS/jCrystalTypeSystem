@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import jcrystal.types.IJType;
 import jcrystal.types.JType;
@@ -50,7 +51,7 @@ public class GlobalTypes{
 		public static final IJType PrintStream = new JType(null, PrintStream.class);
 		
 	}
-	public static final Map<IJType, Object> defaultValues = new HashMap<IJType,Object>();
+	public static final Map<IJType, Object> defaultValues = new TreeMap<IJType, Object>();
 	
 	// load
 	static {

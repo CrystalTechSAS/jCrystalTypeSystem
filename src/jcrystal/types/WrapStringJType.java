@@ -17,6 +17,10 @@ public class WrapStringJType implements Serializable, IJType{
 		throw new NullPointerException(type);
 	}
 	@Override
+	public JClass tryResolve() {
+		throw new NullPointerException(type);
+	}
+	@Override
 	public boolean isEnum() {
 		throw new NullPointerException(type);
 	}

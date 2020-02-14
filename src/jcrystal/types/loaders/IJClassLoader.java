@@ -33,7 +33,7 @@ public interface IJClassLoader {
 	}
 	public default boolean subclassOf(IJType jtype, IJType clase) {
 		if(getLoadedClasses().containsKey(jtype.getName()))
-			return subclassOf(getLoadedClasses().get(jtype.getName()), clase);
+			return subclassOf((JClass)getLoadedClasses().get(jtype.getName()), clase);
 		return false;
 	}
 	public default boolean subclassOf(JClass jtype, IJType clase) {

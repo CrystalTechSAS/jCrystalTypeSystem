@@ -97,4 +97,8 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public final JClass resolve() {
 		return this;
 	}
+	@Override
+	public JClass tryResolve() {
+		return this;
+	}
 }

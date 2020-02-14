@@ -32,6 +32,10 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 		return wrappedType.resolve();
 	}
 	@Override
+	public JClass tryResolve() {
+		return wrappedType.tryResolve();
+	}
+	@Override
 	public final boolean isEnum() {
 		return wrappedType.isEnum();
 	}
@@ -111,5 +115,8 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	@Override
 	public IJClassLoader classLoader() {
 		return wrappedType.classLoader();
+	}
+	public IJType getWrappedType() {
+		return wrappedType;
 	}
 }
