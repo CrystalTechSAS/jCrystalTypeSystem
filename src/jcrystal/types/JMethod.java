@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import jcrystal.types.loaders.IJClassLoader;
 
@@ -17,7 +19,7 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	public int modifiers;
 	public boolean isVoid;
 	public List<JVariable> params = new ArrayList<>();
-	public List<JAnnotation> annotations= new ArrayList<>();
+	public Map<String, JAnnotation> annotations= new TreeMap<>();
 	public JClass declaringClass;
 	
 	public JMethod(IJClassLoader jClassLoader, JClass declaringClass, Method m) {
@@ -45,7 +47,8 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	public int getModifiers() {
 		return modifiers;
 	}
-	public List<JAnnotation> getAnnotations() {
+	@Override
+	public Map<String, JAnnotation> getAnnotations() {
 		return annotations;
 	}
 	public String getName() {

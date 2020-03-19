@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import jcrystal.types.loaders.IJClassLoader;
@@ -88,7 +89,7 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 		return wrappedType.getPackageName();
 	}
 	@Override
-	public List<JAnnotation> getAnnotations() {
+	public Map<String, JAnnotation> getAnnotations() {
 		return wrappedType.getAnnotations();
 	}
 	@Override

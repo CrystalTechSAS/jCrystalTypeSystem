@@ -2,6 +2,7 @@ package jcrystal.types;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -33,13 +34,6 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	boolean isPrimitive();
 	
 	boolean nullable();
-
-	/**
-	 * Este método se sobreescribe porque los tipos no cuentan con anotaciones, las anotaciones en las en las JClass
-	 */
-	boolean isAnnotationPresent(Class<? extends Annotation> clase);
-
-	<A extends Annotation> A getAnnotation(Class<A> annotationClass);
 
 	boolean isSubclassOf(Class<?> clase);
 
@@ -236,7 +230,7 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 			}
 
 			@Override
-			public List<JAnnotation> getAnnotations() {
+			public Map<String, JAnnotation> getAnnotations() {
 				return IJType.this.getAnnotations();
 			}
 

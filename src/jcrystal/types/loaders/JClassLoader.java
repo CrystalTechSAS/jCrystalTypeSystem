@@ -48,7 +48,7 @@ public class JClassLoader implements IJClassLoader, Serializable{
 		if(ret == null) {
 			Package p = Package.getPackage(name);
 			if(p!=null)//TODO: potential bug.
-				loadedPackages.put(name, ret = new JPackage(p));
+				loadedPackages.put(name, ret = new JPackage(this, p));
 		}
 		return ret;
 	}

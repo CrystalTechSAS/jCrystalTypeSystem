@@ -14,7 +14,7 @@ public class JAnnotation implements Serializable{
 	public String simpleName;
 	public Map<String, Object> values = new TreeMap<>();
 	
-	public JAnnotation(Class<? extends Annotation> annotation) {
+	public JAnnotation(Class<?> annotation) {
 		this.name = annotation.getName();
 		this.simpleName = annotation.getSimpleName();
 	}
@@ -26,6 +26,7 @@ public class JAnnotation implements Serializable{
 		Arrays.sort(ms, (c1,c2)->c1.getName().compareTo(c2.getName()));
 		for(Method m : ms)
 			try {
+				m.setAccessible(true);
 				Object val = m.invoke(annotation);
 				if(val != null) {
 					if(m.getReturnType().isArray()) {

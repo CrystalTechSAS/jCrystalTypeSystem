@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import jcrystal.types.loaders.IJClassLoader;
 
@@ -15,7 +15,7 @@ public class JVariable implements JIAnnotable, Serializable{
 	public IJType type;
 	public String name;
 	public int modifiers;
-	List<JAnnotation> annotations= new ArrayList<>();
+	Map<String, JAnnotation> annotations= new TreeMap<>();
 	public String staticDefaultValue;
 	private JIAnnotable parent;
 	public JVariable(int modifiers, IJType type, String name) {
@@ -37,7 +37,7 @@ public class JVariable implements JIAnnotable, Serializable{
 		modifiers = f.getModifiers();
 		Arrays.stream(f.getAnnotations()).sorted((c1,c2)->c1.annotationType().getName().compareTo(c2.annotationType().getName())).forEach(a->{
 			try {
-				annotations.add(new JAnnotation(a));				
+				annotations.put(a.annotationType().getName(), new JAnnotation(a));				
 			}catch (Exception e) {
 				throw new NullPointerException();
 			}
@@ -76,7 +76,7 @@ public class JVariable implements JIAnnotable, Serializable{
 		}
 	}
 	@Override
-	public List<JAnnotation> getAnnotations() {
+	public Map<String, JAnnotation> getAnnotations() {
 		return annotations;
 	}
 	public IJType getType() {
