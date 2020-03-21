@@ -49,10 +49,13 @@ public interface JIAnnotable {
 	public default <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		return AnnotationResolverHolder.CUSTOM_RESOLVER.resolveAnnotation(annotationClass, this);
 	}
-	public default void ifJAnnotation(String name, Consumer<JAnnotation> consumer) {
+	public default boolean ifJAnnotation(String name, Consumer<JAnnotation> consumer) {
 		JAnnotation a = getJAnnotation(name);
-		if(a != null)
+		if(a != null) {
 			consumer.accept(a);
+			return true;
+		}
+		return false;
 	}
 	public default <A extends Annotation> boolean ifAnnotation(Class<A> clase, Consumer<A> consumer) {
 		A annotation = getAnnotation(clase);
