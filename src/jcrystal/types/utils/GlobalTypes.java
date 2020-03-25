@@ -37,6 +37,7 @@ public class GlobalTypes{
 	
 	public static final class ARRAY{
 		public static IJType DOUBLE = GlobalTypes.load(double[].class);
+		public static IJType STRING = GlobalTypes.load(String[].class);
 	}
 	public static final class ARRAY2D{
 		public static IJType DOUBLE = GlobalTypes.load(double[][].class);

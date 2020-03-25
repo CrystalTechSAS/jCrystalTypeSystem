@@ -25,7 +25,7 @@ public interface JIAnnotable {
 	public default boolean isJAnnotationPresent(String name) {
 		return getAnnotations().containsKey(name);
 	}
-	public default boolean isJAnnotationPresent(Class<? extends JAnnotation> clase) {
+	public default boolean isJAnnotationPresent(Class<?> clase) {
 		return getAnnotations().containsKey(clase.getName());
 	}
 	public default boolean isAnnotationPresent(Class<? extends Annotation> clase) {
