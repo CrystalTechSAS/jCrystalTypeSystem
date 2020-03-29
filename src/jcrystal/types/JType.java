@@ -175,7 +175,7 @@ public class JType implements Serializable, IJType{
 			return ret;
 		JPackage p = getPackage();
 		if(p != null)
-			ret = p.getJAnnotationWithAncestorCheck(name);
-		return ret;
+			return p.getJAnnotationWithAncestorCheck(name);
+		return null;
 	}
 }
