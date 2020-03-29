@@ -176,6 +176,6 @@ public class JType implements Serializable, IJType{
 		JPackage p = getPackage();
 		if(p != null)
 			ret = p.getJAnnotationWithAncestorCheck(name);
-		return null;
+		return ret;
 	}
 }
