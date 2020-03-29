@@ -27,10 +27,8 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public JClass(IJClassLoader jClassLoader, Class<?> clase){
 		super(jClassLoader, clase);
 		modifiers = clase.getModifiers();
-		name = clase.getName();
-		simpleName = clase.getSimpleName();
 	}
-	public void load(Class<?> clase) {
+	public JClass load(Class<?> clase) {
 		isEnum = clase.isEnum();
 		isStatic = Modifier.isStatic(clase.getModifiers());
 		inner = clase.isMemberClass();
@@ -56,6 +54,7 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		loadAnnotations(clase.getAnnotations());
 		if(isEnum)
 			enumData = new JEnum(jClassLoader, clase);
+		return this;
 	}
 	@Override
 	public boolean isSubclassOf(Class<?> clase) {
