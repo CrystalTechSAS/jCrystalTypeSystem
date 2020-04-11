@@ -2,10 +2,14 @@ package jcrystal.types;
 
 import java.lang.reflect.Modifier;
 
-public interface JIVariable {
+public interface JIVariable extends JIAnnotable {
 
 	IJType type();
-
+	
+	/**
+	* The var name. Eg: color
+	* @return
+	*/
 	String name();
 
 	default int modifiers() {
