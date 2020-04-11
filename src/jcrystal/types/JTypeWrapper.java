@@ -18,7 +18,7 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	private List<IJType> innerTypes;
 	public JTypeWrapper(IJType type) {
 		this.wrappedType = type;
-		name = type.getName();
+		name = type.name();
 		simpleName = type.getSimpleName();
 		innerTypes = new ArrayList<>(type.getInnerTypes());
 	}
@@ -73,7 +73,7 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 		return wrappedType.is(classes);
 	}
 	@Override
-	public final String getName() {
+	public final String name() {
 		return name;
 	}
 	@Override
@@ -99,11 +99,11 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 	@Override
 	public String toString() {
 		if(getInnerTypes().isEmpty())
-			return getName();
+			return name();
 		else if(isArray())
 			return getInnerTypes().get(0)+"[]";
 		else
-			return getName()+":<" + getInnerTypes().stream().map(f->f.toString()).collect(Collectors.joining(", ")) + ">";
+			return name()+":<" + getInnerTypes().stream().map(f->f.toString()).collect(Collectors.joining(", ")) + ">";
 	}
 	@Override
 	public boolean nullable() {

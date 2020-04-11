@@ -52,12 +52,12 @@ public class WrapStringJType implements Serializable, IJType{
 	@Override
 	public boolean is(IJType... classes) {
 		for(IJType c : classes)
-			if(c.getName().equals(type))
+			if(c.name().equals(type))
 				return true;
 		return false;
 	}
 	@Override
-	public String getName() {
+	public String name() {
 		return type;
 	}
 	@Override

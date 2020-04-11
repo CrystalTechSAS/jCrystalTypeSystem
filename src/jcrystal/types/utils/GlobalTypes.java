@@ -35,6 +35,9 @@ public class GlobalTypes{
 	public static final IJType OBJ_BYTE = GlobalTypes.load(Byte.class);
 	public static final IJType OBJ_SHORT = GlobalTypes.load(Short.class);
 	
+	public static final IJType[] primitives = {LONG, INT, DOUBLE, BOOLEAN, FLOAT, CHAR, BYTE, SHORT};
+	public static final IJType[] primitiveObjects = {OBJ_LONG, OBJ_INT, OBJ_DOUBLE, OBJ_FLOAT, OBJ_BOOLEAN, OBJ_CHAR, OBJ_BYTE, OBJ_SHORT};
+	public static final IJType[] primitivesAndObjects = {LONG, INT, DOUBLE, BOOLEAN, FLOAT, CHAR, BYTE, SHORT, OBJ_LONG, OBJ_INT, OBJ_DOUBLE, OBJ_FLOAT, OBJ_BOOLEAN, OBJ_CHAR, OBJ_BYTE, OBJ_SHORT};
 	public static final class ARRAY{
 		public static IJType DOUBLE = GlobalTypes.load(double[].class);
 		public static IJType STRING = GlobalTypes.load(String[].class);
@@ -53,6 +56,7 @@ public class GlobalTypes{
 		
 	}
 	public static final Map<IJType, Object> defaultValues = new TreeMap<IJType, Object>();
+	public static final Map<IJType, String> defaultValuesStr = new TreeMap<IJType, String>();
 	
 	// load
 	static {
@@ -64,6 +68,15 @@ public class GlobalTypes{
 		defaultValues.put(CHAR, new Character('\0'));
 		defaultValues.put(FLOAT, new Float(0.0F));
 		defaultValues.put(DOUBLE, new Double(0.0));
+
+		defaultValuesStr.put(BOOLEAN, "false");
+		defaultValuesStr.put(BYTE, "0");
+		defaultValuesStr.put(SHORT, "0");
+		defaultValuesStr.put(INT, "0");
+		defaultValuesStr.put(LONG, "0l");
+		defaultValuesStr.put(CHAR, "'\\0'");
+		defaultValuesStr.put(FLOAT, "0.0f");
+		defaultValuesStr.put(DOUBLE, "0.0");
 	}
 	private static IJType load(Class<?> clase){
 		return new JType(null, clase);

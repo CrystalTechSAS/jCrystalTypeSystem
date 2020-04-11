@@ -10,7 +10,7 @@ import java.util.TreeMap;
 
 import jcrystal.types.loaders.IJClassLoader;
 
-public class JVariable implements JIAnnotable, Serializable{
+public class JVariable implements JIAnnotable, Serializable, JIVariable{
 	private static final long serialVersionUID = 2251144499897925662L;
 	public IJType type;
 	public String name;
@@ -49,7 +49,7 @@ public class JVariable implements JIAnnotable, Serializable{
 				Object defaultValue = f.get(null);
 				if(defaultValue != null) {
 					staticDefaultValue = defaultValue.toString();
-					if(getType().isPrimitive()) {
+					if(type().isPrimitive()) {
 						if(f.getType() == long.class && defaultValue.equals(new Long(0)))
 							staticDefaultValue = null;		
 						else if(f.getType() == int.class && defaultValue.equals(new Integer(0)))
@@ -58,7 +58,7 @@ public class JVariable implements JIAnnotable, Serializable{
 							staticDefaultValue = null;
 						else if(f.getType() == boolean.class && defaultValue.equals(new Boolean(false)))
 							staticDefaultValue = null;
-					}else if(getType().isEnum()) {
+					}else if(type().isEnum()) {
 						staticDefaultValue = f.getType().getSimpleName()+"."+f.getType().getMethod("name").invoke(defaultValue).toString();
 					}else if(defaultValue.equals(new Long(0)))
 						staticDefaultValue = null;		
@@ -79,28 +79,16 @@ public class JVariable implements JIAnnotable, Serializable{
 	public Map<String, JAnnotation> getAnnotations() {
 		return annotations;
 	}
-	public IJType getType() {
+	@Override
+	public IJType type() {
 		return type;
 	}
-	public String getName() {
+	@Override
+	public String name() {
 		return name;
 	}
-	public boolean isPublic() {
-		return Modifier.isPublic(modifiers);
-	}
-	public boolean isStatic() {
-		return Modifier.isStatic(modifiers);
-	}
-	public boolean isFinal() {
-		return Modifier.isFinal(modifiers);
-	}
-	public boolean isPrivate() {
-		return Modifier.isPrivate(modifiers);
-	}
-	public boolean isProtected() {
-		return Modifier.isProtected(modifiers);
-	}
-	public int getModifiers() {
+	@Override
+	public int modifiers() {
 		return modifiers;
 	}
 	@Override

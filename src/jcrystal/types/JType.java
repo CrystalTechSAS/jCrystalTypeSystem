@@ -1,13 +1,11 @@
 package jcrystal.types;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -131,11 +129,11 @@ public class JType implements Serializable, IJType{
 	}
 	@Override
 	public final boolean is(IJType ... classes) {
-		for(IJType c : classes)if(c.getName().equals(name))return true;
+		for(IJType c : classes)if(c.name().equals(name))return true;
 		return false;
 	}
 	@Override
-	public final String getName() {
+	public final String name() {
 		return name;
 	}
 	@Override
@@ -157,11 +155,11 @@ public class JType implements Serializable, IJType{
 	@Override
 	public String toString() {
 		if(getInnerTypes().isEmpty())
-			return getName()+":";
+			return name()+":";
 		else if(isArray())
 			return getInnerTypes().get(0)+":[]";
 		else
-			return getName()+":<" + getInnerTypes().stream().map(f->f.toString()).collect(Collectors.joining(", ")) + ">";
+			return name()+":<" + getInnerTypes().stream().map(f->f.toString()).collect(Collectors.joining(", ")) + ">";
 	}
 	
 	@Override

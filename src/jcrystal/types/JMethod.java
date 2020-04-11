@@ -51,7 +51,7 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	public Map<String, JAnnotation> getAnnotations() {
 		return annotations;
 	}
-	public String getName() {
+	public String name() {
 		return name;
 	}
 	public IJType getReturnType() {

@@ -60,7 +60,7 @@ public class JClassLoader implements IJClassLoader, Serializable{
 	
 	@Override
 	public void load(IJType type) {
-		loadedClasses.put(type.getName(), type);
+		loadedClasses.put(type.name(), type);
 	}
 	@Override
 	public IJClassLoader getParentClassLoader() {

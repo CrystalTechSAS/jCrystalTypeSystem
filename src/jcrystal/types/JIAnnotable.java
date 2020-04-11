@@ -20,7 +20,7 @@ public interface JIAnnotable {
 		});
 	}
 	public default boolean isJAnnotationPresent(IJType type) {
-		return type != null && isJAnnotationPresent(type.getName());
+		return type != null && isJAnnotationPresent(type.name());
 	}
 	public default boolean isJAnnotationPresent(String name) {
 		return getAnnotations().containsKey(name);
