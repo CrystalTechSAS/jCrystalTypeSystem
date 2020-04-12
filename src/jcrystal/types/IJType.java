@@ -64,6 +64,10 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	
 	List<IJType> getInnerTypes();
 	
+	default IJType firstInnerType() {
+		return getInnerTypes().get(0);
+	}
+	
 	IJClassLoader classLoader();
 
 	public default IJType getObjectType(){
