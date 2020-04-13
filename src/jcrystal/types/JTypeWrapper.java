@@ -22,6 +22,9 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 		simpleName = type.getSimpleName();
 		innerTypes = new ArrayList<>(type.getInnerTypes());
 	}
+	public IJType wrappedType() {
+		return wrappedType;
+	}
 	public void setName(String name) {
 		this.name = name;
 	}
