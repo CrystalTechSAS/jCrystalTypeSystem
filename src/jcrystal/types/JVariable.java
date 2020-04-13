@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import jcrystal.types.loaders.IJClassLoader;
+import jcrystal.types.vars.AbsJAccessor;
 
 public class JVariable implements JIAnnotable, Serializable, JIVariable{
 	private static final long serialVersionUID = 2251144499897925662L;
@@ -97,5 +98,23 @@ public class JVariable implements JIAnnotable, Serializable, JIVariable{
 		if(ret == null && parent != null)
 			ret = parent.getJAnnotationWithAncestorCheck(name);
 		return ret;
+	}
+	private AbsJAccessor accessor;
+	public AbsJAccessor accessor() {
+		if(accessor == null)
+			accessor = new AbsJAccessor() {
+				@Override
+				public IJType type() {
+					return JVariable.this.type();
+				}
+				
+				@Override
+				public String name() {
+					return JVariable.this.name();
+				}
+				
+				
+			};
+		return accessor.asField().prefix(null);
 	}
 }
