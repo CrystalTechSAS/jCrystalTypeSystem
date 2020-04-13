@@ -6,7 +6,6 @@ import java.util.Map;
 import jcrystal.types.IJType;
 import jcrystal.types.JAnnotation;
 import jcrystal.types.JIVariable;
-import jcrystal.utils.InternalException;
 
 public interface IAccessor extends JIVariable{
 	/**
@@ -55,7 +54,7 @@ class SubPropertyAccessor implements IAccessor{
 	}
 	@Override
 	public String write(String value) {
-		throw new InternalException(500, "Not implemented");
+		throw new NullPointerException("Not implemented");
 	}
 	
 }
