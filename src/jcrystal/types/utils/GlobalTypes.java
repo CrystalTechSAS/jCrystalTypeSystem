@@ -4,8 +4,13 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Function;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import jcrystal.types.IJType;
 import jcrystal.types.JType;
@@ -53,7 +58,33 @@ public class GlobalTypes{
 	public static final class Java{
 		public static final IJType PrintWriter = new JType(null, PrintWriter.class);
 		public static final IJType PrintStream = new JType(null, PrintStream.class);
-		
+	}
+	public static final class Json{
+		public static final IJType JSONObject = new JType(null, JSONObject.class);
+		public static final IJType JSONArray = new JType(null, JSONArray.class);
+	}
+	public static final class jCrystal{
+		public static final IJType ErrorListener = new JType(null, "OnErrorListener");
+		public static final IJType VoidSuccessListener = new JType(null, "OnVoidSuccessListener");
+		private static TreeMap<IJType, IJType> NativeSuccessListener = new TreeMap<>();
+		static {
+			for(IJType type : GlobalTypes.primitiveObjects)
+				NativeSuccessListener.put(type, new JType(null, "On" + type.getSimpleName() + "SuccessListener"));
+		}
+		public static final IJType NativeSuccessListener(IJType type) {
+			return NativeSuccessListener.get(type);
+		}
+		public static final IJType OnSuccessListener(List<IJType> innerTypes) {
+			JType ret = new JType(null, "On" + innerTypes.size() + "SuccessListener");
+			ret.innerTypes.addAll(innerTypes);
+			return ret;
+		}
+		public static final IJType OnSuccessListener(IJType...innerTypes) {
+			JType ret = new JType(null, "On" + innerTypes.length + "SuccessListener");
+			for(IJType type : innerTypes)
+				ret.innerTypes.add(type);
+			return ret;
+		}
 	}
 	public static final Map<IJType, Object> defaultValues = new TreeMap<IJType, Object>();
 	public static final Map<IJType, String> defaultValuesStr = new TreeMap<IJType, String>();
