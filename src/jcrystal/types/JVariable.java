@@ -19,6 +19,9 @@ public class JVariable implements JIAnnotable, Serializable, JIVariable{
 	Map<String, JAnnotation> annotations = new TreeMap<>();
 	public String staticDefaultValue;
 	private JIAnnotable parent;
+	public JVariable(IJType type, String name) {
+		this(0, type, name);
+	}
 	public JVariable(int modifiers, IJType type, String name) {
 		this.modifiers = modifiers;
 		this.type = type;
