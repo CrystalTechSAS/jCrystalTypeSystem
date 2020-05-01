@@ -9,9 +9,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import jcrystal.types.IJType;
 import jcrystal.types.JType;
 
@@ -20,6 +17,7 @@ public class GlobalTypes{
 	public static final IJType VOID = GlobalTypes.load(Void.TYPE);
 	
 	public static final IJType STRING = GlobalTypes.load(String.class);
+	public static final IJType Object = GlobalTypes.load(Object.class);
 	public static final IJType DATE = GlobalTypes.load(Date.class);
 	
 	public static final IJType LONG = GlobalTypes.load(long.class);
@@ -46,6 +44,7 @@ public class GlobalTypes{
 	public static final class ARRAY{
 		public static IJType DOUBLE = GlobalTypes.load(double[].class);
 		public static IJType STRING = GlobalTypes.load(String[].class);
+		public static IJType Object = GlobalTypes.load(Object[].class);
 	}
 	public static final class ARRAY2D{
 		public static IJType DOUBLE = GlobalTypes.load(double[][].class);
@@ -53,6 +52,7 @@ public class GlobalTypes{
 	public static final class Google{
 		public static final class DataStore{
 			public static final IJType KEY = new JType(null, "com.google.appengine.api.datastore.Key");
+			public static final IJType Text = new JType(null, "com.google.appengine.api.datastore.Text");
 		}
 	}
 	public static final class Java{
@@ -60,8 +60,8 @@ public class GlobalTypes{
 		public static final IJType PrintStream = new JType(null, PrintStream.class);
 	}
 	public static final class Json{
-		public static final IJType JSONObject = new JType(null, JSONObject.class);
-		public static final IJType JSONArray = new JType(null, JSONArray.class);
+		public static final IJType JSONObject = new JType(null, "org.json.JSONObject");
+		public static final IJType JSONArray = new JType(null, "org.json.JSONArray");
 	}
 	public static final class jCrystal{
 		public static final IJType ErrorListener = new JType(null, "OnErrorListener");
@@ -69,18 +69,21 @@ public class GlobalTypes{
 		private static TreeMap<IJType, IJType> NativeSuccessListener = new TreeMap<>();
 		static {
 			for(IJType type : GlobalTypes.primitiveObjects)
-				NativeSuccessListener.put(type, new JType(null, "On" + type.getSimpleName() + "SuccessListener"));
+				NativeSuccessListener.put(type, new JType(null, "On" + type.getSimpleName() + "SuccessListener").nullable(false));
 		}
 		public static final IJType NativeSuccessListener(IJType type) {
 			return NativeSuccessListener.get(type);
 		}
+		public static final boolean isSuccessListener(IJType type) {
+			return type.getSimpleName().startsWith("On") && type.getSimpleName().endsWith("SuccessListener");
+		}
 		public static final IJType OnSuccessListener(List<IJType> innerTypes) {
-			JType ret = new JType(null, "On" + innerTypes.size() + "SuccessListener");
+			JType ret = new JType(null, "On" + innerTypes.size() + "SuccessListener").nullable(false);
 			ret.innerTypes.addAll(innerTypes);
 			return ret;
 		}
 		public static final IJType OnSuccessListener(IJType...innerTypes) {
-			JType ret = new JType(null, "On" + innerTypes.length + "SuccessListener");
+			JType ret = new JType(null, "On" + innerTypes.length + "SuccessListener").nullable(false);
 			for(IJType type : innerTypes)
 				ret.innerTypes.add(type);
 			return ret;

@@ -166,6 +166,10 @@ public class JType implements Serializable, IJType{
 	public boolean nullable() {
 		return nullable;
 	}
+	public JType nullable(boolean nullable) {
+		this.nullable = nullable;
+		return this;
+	}
 	@Override
 	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
 		JAnnotation ret = getJAnnotation(name);

@@ -5,11 +5,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import jcrystal.types.JVariable;
-import jcrystal.utils.langAndPlats.AbsCodeBlock.PL;
 
 public class JVariableList {
 	public final ArrayList<JVariable> list;
-    public static final PL EMPTY = new PL();
+    public static final JVariableList EMPTY = new JVariableList();
     public JVariableList(){
         this.list = new ArrayList<>();
     }
