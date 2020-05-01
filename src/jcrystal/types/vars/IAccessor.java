@@ -50,7 +50,7 @@ class SubPropertyAccessor implements IAccessor{
 	}
 	@Override
 	public String read() {
-		return parent.read() + " == null ? null : " + parent.read() + "." + name();
+		return parent.read() + " == null ? null : " + parent.read() + "." + name;
 	}
 	@Override
 	public String write(String value) {
