@@ -68,11 +68,14 @@ public class GlobalTypes{
 		public static final IJType VoidSuccessListener = new JType(null, "OnVoidSuccessListener");
 		private static TreeMap<IJType, IJType> NativeSuccessListener = new TreeMap<>();
 		static {
-			for(IJType type : GlobalTypes.primitiveObjects)
+			for(IJType type : GlobalTypes.primitivesAndObjects)
 				NativeSuccessListener.put(type, new JType(null, "On" + type.getSimpleName() + "SuccessListener").nullable(false));
 		}
 		public static final IJType NativeSuccessListener(IJType type) {
-			return NativeSuccessListener.get(type);
+			IJType ret = NativeSuccessListener.get(type);
+			if(ret == null)
+				throw new NullPointerException();
+			return ret;
 		}
 		public static final boolean isSuccessListener(IJType type) {
 			return type.getSimpleName().startsWith("On") && type.getSimpleName().endsWith("SuccessListener");
