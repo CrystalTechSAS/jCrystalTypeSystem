@@ -46,7 +46,7 @@ class SubPropertyAccessor implements IAccessor{
 	}
 	@Override
 	public String name() {
-		return name;
+		return parent.name();
 	}
 	@Override
 	public String read() {
