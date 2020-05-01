@@ -69,7 +69,7 @@ public class GlobalTypes{
 		private static TreeMap<IJType, IJType> NativeSuccessListener = new TreeMap<>();
 		static {
 			for(IJType type : GlobalTypes.primitivesAndObjects)
-				NativeSuccessListener.put(type, new JType(null, "On" + type.getSimpleName() + "SuccessListener").nullable(false));
+				NativeSuccessListener.put(type, new JType(null, "On" + type.getObjectType().getSimpleName() + "SuccessListener").nullable(false));
 		}
 		public static final IJType NativeSuccessListener(IJType type) {
 			IJType ret = NativeSuccessListener.get(type);
