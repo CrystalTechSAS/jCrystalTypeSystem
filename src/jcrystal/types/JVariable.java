@@ -15,12 +15,17 @@ public class JVariable implements JIAnnotable, Serializable, JIVariable{
 	private static final long serialVersionUID = 2251144499897925662L;
 	public IJType type;
 	public String name;
+	public String value;
 	public int modifiers;
 	Map<String, JAnnotation> annotations = new TreeMap<>();
 	public String staticDefaultValue;
 	private JIAnnotable parent;
 	public JVariable(IJType type, String name) {
 		this(0, type, name);
+	}
+	public JVariable(IJType type, String name, String value) {
+		this(0, type, name);
+		this.value = value; 
 	}
 	public JVariable(int modifiers, IJType type, String name) {
 		this.modifiers = modifiers;
