@@ -92,6 +92,9 @@ public class JVariable implements JIAnnotable, Serializable, JIVariable{
 	public IJType type() {
 		return type;
 	}
+	public void type(IJType type) {
+		this.type = type;
+	}
 	@Override
 	public String name() {
 		return name;
