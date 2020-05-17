@@ -3,11 +3,9 @@ package jcrystal.types.utils;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.function.Function;
 
 import jcrystal.types.IJType;
 import jcrystal.types.JType;
@@ -53,6 +51,7 @@ public class GlobalTypes{
 		public static final class DataStore{
 			public static final IJType KEY = new JType(null, "com.google.appengine.api.datastore.Key");
 			public static final IJType Text = new JType(null, "com.google.appengine.api.datastore.Text");
+			public static final IJType GeoPt = new JType(null, "com.google.appengine.api.datastore.GeoPt");
 		}
 	}
 	public static final class Java{
@@ -117,5 +116,11 @@ public class GlobalTypes{
 	}
 	private static IJType load(Class<?> clase){
 		return new JType(null, clase);
+	}
+	
+	public static class is{
+		public static boolean geoPoint(IJType type) {
+			return type.is(Google.DataStore.GeoPt);
+		}
 	}
 }
