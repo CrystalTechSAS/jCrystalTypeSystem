@@ -18,13 +18,13 @@ public interface IJClassLoader {
 	public JPackage packageForName(String name);
 	
 	public default boolean subclassOf(IJType jtype, Class<?> clase) {
-		if(jtype.getName().equals(clase.getName()))//Equivalencia
+		if(jtype.name().equals(clase.getName()))//Equivalencia
 			return true;
-		if(jtype.getName().equals("java.lang.Object"))//0
+		if(jtype.name().equals("java.lang.Object"))//0
 			return false;
 		if(jtype instanceof JClass)
 			return subclassOf((JClass)jtype, clase);
-		IJType loaded = getLoadedClasses().get(jtype.getName());
+		IJType loaded = getLoadedClasses().get(jtype.name());
 		if(loaded != null && loaded instanceof JClass)
 			return subclassOf((JClass)loaded, clase);
 		if(getParentClassLoader() != null)
@@ -32,8 +32,8 @@ public interface IJClassLoader {
 		return false;
 	}
 	public default boolean subclassOf(IJType jtype, IJType clase) {
-		if(getLoadedClasses().containsKey(jtype.getName()))
-			return subclassOf((JClass)getLoadedClasses().get(jtype.getName()), clase);
+		if(getLoadedClasses().containsKey(jtype.name()))
+			return subclassOf((JClass)getLoadedClasses().get(jtype.name()), clase);
 		return false;
 	}
 	public default boolean subclassOf(JClass jtype, IJType clase) {

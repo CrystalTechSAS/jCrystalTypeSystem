@@ -1,13 +1,11 @@
 package jcrystal.types;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -15,7 +13,7 @@ import java.util.stream.Collectors;
 
 import jcrystal.types.loaders.IJClassLoader;
 
-public class JType implements JIAnnotable, Serializable, IJType{
+public class JType implements Serializable, IJType{
 	private static final long serialVersionUID = -875202507362620017L;
 
 	public String name;
@@ -27,7 +25,8 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	boolean nullable;
 	public List<IJType> innerTypes = new ArrayList<>();
 	public IJClassLoader jClassLoader;
-	public Map<String, Annotation> annotations;
+	public Map<String, JAnnotation> annotations = new TreeMap<>();
+	
 	/**
 	 * True if this Type comes from a Java file written by coder.
 	 */
@@ -86,12 +85,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	public List<IJType> getInnerTypes() {
 		return innerTypes;
 	}
-	public <T extends Annotation> JType addAnnotation(T annotation) {
-		if(annotations == null)
-			annotations = new TreeMap<>();
-		annotations.put(annotation.annotationType().getName(), annotation);
-		return this;
-	}
 	@Override
 	public JClass tryResolve() {
 		IJType ret = jClassLoader.forName(name);
@@ -116,39 +109,6 @@ public class JType implements JIAnnotable, Serializable, IJType{
 		return jClassLoader;
 	}
 	@Override
-	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {
-		if(jClassLoader != null) {
-			IJType c = jClassLoader.forName(name);
-			//If we get a reference for a type, we try to get the class
-			if(c != null && c instanceof JClass)
-				return c.isAnnotationPresent(clase);
-		}
-		if(annotations != null && annotations.containsKey(clase.getName()))
-			return true;
-		if(!primitive)
-			try {
-				return Class.forName(name).isAnnotationPresent(clase);
-			} catch (ClassNotFoundException e) {
-			}
-		return false;
-	}
-	@Override
-	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
-		if(jClassLoader != null) {
-			IJType c = jClassLoader.forName(name);
-			if(c != null && c instanceof JClass)
-				return c.getAnnotation(annotationClass);
-		}
-		if(annotations != null && annotations.containsKey(annotationClass.getName()))
-			return (A)annotations.get(annotationClass.getName());
-		if(!primitive)
-			try {
-				return Class.forName(name).getAnnotation(annotationClass);
-			} catch (ClassNotFoundException e) {
-			}
-		return null; 
-	}
-	@Override
 	public boolean isSubclassOf(Class<?> clase) {
 		return !isPrimitive() && (is(clase) || (jClassLoader != null && jClassLoader.subclassOf(this, clase)));
 	}
@@ -169,11 +129,11 @@ public class JType implements JIAnnotable, Serializable, IJType{
 	}
 	@Override
 	public final boolean is(IJType ... classes) {
-		for(IJType c : classes)if(c.getName().equals(name))return true;
+		for(IJType c : classes)if(c.name().equals(name))return true;
 		return false;
 	}
 	@Override
-	public final String getName() {
+	public final String name() {
 		return name;
 	}
 	@Override
@@ -189,35 +149,35 @@ public class JType implements JIAnnotable, Serializable, IJType{
 		return packageName;
 	}
 	@Override
-	public List<JAnnotation> getAnnotations() {
-		if(jClassLoader != null) {
-			IJType c = jClassLoader.forName(name);
-			if(c != null && c instanceof JClass)
-				return ((JClass)c).annotations;
-		}
-		return Collections.emptyList();
+	public final Map<String, JAnnotation> getAnnotations() {
+		return annotations;
 	}
 	@Override
 	public String toString() {
 		if(getInnerTypes().isEmpty())
-			return getName()+":";
+			return name()+":";
 		else if(isArray())
 			return getInnerTypes().get(0)+":[]";
 		else
-			return getName()+":<" + getInnerTypes().stream().map(f->f.toString()).collect(Collectors.joining(", ")) + ">";
+			return name()+":<" + getInnerTypes().stream().map(f->f.toString()).collect(Collectors.joining(", ")) + ">";
 	}
+	
 	@Override
 	public boolean nullable() {
 		return nullable;
 	}
+	public JType nullable(boolean nullable) {
+		this.nullable = nullable;
+		return this;
+	}
 	@Override
 	public JAnnotation getJAnnotationWithAncestorCheck(String name) {
 		JAnnotation ret = getJAnnotation(name);
-		if(ret == null) {
-			JPackage p = getPackage();
-			if(p != null)
-				ret = p.getJAnnotationWithAncestorCheck(name);
-		}
-		return ret;
+		if(ret != null)
+			return ret;
+		JPackage p = getPackage();
+		if(p != null)
+			return p.getJAnnotationWithAncestorCheck(name);
+		return null;
 	}
 }

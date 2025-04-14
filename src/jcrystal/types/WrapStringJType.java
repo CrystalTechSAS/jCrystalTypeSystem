@@ -2,7 +2,9 @@ package jcrystal.types;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import jcrystal.types.loaders.IJClassLoader;
 
@@ -50,12 +52,12 @@ public class WrapStringJType implements Serializable, IJType{
 	@Override
 	public boolean is(IJType... classes) {
 		for(IJType c : classes)
-			if(c.getName().equals(type))
+			if(c.name().equals(type))
 				return true;
 		return false;
 	}
 	@Override
-	public String getName() {
+	public String name() {
 		return type;
 	}
 	@Override
@@ -75,8 +77,8 @@ public class WrapStringJType implements Serializable, IJType{
 		throw new NullPointerException(type);
 	}
 	@Override
-	public List<JAnnotation> getAnnotations() {
-		throw new NullPointerException(type);
+	public Map<String, JAnnotation> getAnnotations() {
+		return Collections.EMPTY_MAP;
 	}
 	@Override
 	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {

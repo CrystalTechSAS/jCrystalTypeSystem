@@ -20,7 +20,6 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public List<JVariable> attributes = new ArrayList<>();
 	public List<JMethod> methods = new ArrayList<>();
 	public List<JMethod> constructors = new ArrayList<>();
-	public List<JAnnotation> annotations= new ArrayList<>();
 	public JEnum enumData;
 	public IJType superClass;
 	public IJType declaringClass;
@@ -28,8 +27,8 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public JClass(IJClassLoader jClassLoader, Class<?> clase){
 		super(jClassLoader, clase);
 		modifiers = clase.getModifiers();
-		name = clase.getName();
-		simpleName = clase.getSimpleName();
+	}
+	public JClass load(Class<?> clase) {
 		isEnum = clase.isEnum();
 		isStatic = Modifier.isStatic(clase.getModifiers());
 		inner = clase.isMemberClass();
@@ -55,6 +54,7 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		loadAnnotations(clase.getAnnotations());
 		if(isEnum)
 			enumData = new JEnum(jClassLoader, clase);
+		return this;
 	}
 	@Override
 	public boolean isSubclassOf(Class<?> clase) {
@@ -71,10 +71,6 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	public int getModifiers() {
 		return modifiers;
 	}
-	@Override
-	public List<JAnnotation> getAnnotations() {
-		return annotations;
-	}
 	
 	public File getFile(File srcFile){
 		return new File(srcFile, name.replace(".", "/")+".java");
@@ -84,10 +80,6 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 	}
 	public IJType getDeclaringClass() {
 		return declaringClass;
-	}
-	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {
-		boolean v = getAnnotations().stream().anyMatch(f->f.name.equals(clase.getName()));
-		return v;
 	}
 	public <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
 		A b = AnnotationResolverHolder.CUSTOM_RESOLVER.resolveAnnotation(annotationClass, this);

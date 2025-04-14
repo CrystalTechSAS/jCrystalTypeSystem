@@ -2,6 +2,7 @@ package jcrystal.types;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -14,7 +15,7 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	default JClass resolve() {
 		JClass ret = this.tryResolve();
 		if(ret == null)
-			throw new NullPointerException("Class not found: " + getName());
+			throw new NullPointerException("Class not found: " + name());
 		return ret;
 	}
 	default <R> R resolve(Function<JClass, R> f) {
@@ -34,13 +35,6 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	
 	boolean nullable();
 
-	/**
-	 * Este método se sobreescribe porque los tipos no cuentan con anotaciones, las anotaciones en las en las JClass
-	 */
-	boolean isAnnotationPresent(Class<? extends Annotation> clase);
-
-	<A extends Annotation> A getAnnotation(Class<A> annotationClass);
-
 	boolean isSubclassOf(Class<?> clase);
 
 	boolean isSubclassOf(IJType clase);
@@ -57,10 +51,10 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	boolean is(IJType... classes);
 	
 	default boolean is(String name) {
-		return getName().equals(name) || getSimpleName().equals(name);
+		return name().equals(name) || getSimpleName().equals(name);
 	}
 
-	String getName();
+	String name();
 
 	String getSimpleName();
 
@@ -69,6 +63,10 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	String getPackageName();
 	
 	List<IJType> getInnerTypes();
+	
+	default IJType firstInnerType() {
+		return getInnerTypes().get(0);
+	}
 	
 	IJClassLoader classLoader();
 
@@ -86,23 +84,36 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	        return this;
 	}
 	public default IJType getPrimitiveType(){
-	        switch (getSimpleName()){
-	      	case "Integer": return GlobalTypes.INT;
-	            case "Long": return GlobalTypes.LONG;
-	            case "Double": return GlobalTypes.DOUBLE;
-	            case "Float": return GlobalTypes.FLOAT;
-	            case "Boolean": return GlobalTypes.BOOLEAN;
-	            case "Character": return GlobalTypes.CHAR;
-	            case "Byte": return GlobalTypes.BYTE;
-	            case "Short": return GlobalTypes.SHORT;
-	        }
-	        return this;
+        switch (getSimpleName()){
+      		case "Integer": return GlobalTypes.INT;
+            case "Long": return GlobalTypes.LONG;
+            case "Double": return GlobalTypes.DOUBLE;
+            case "Float": return GlobalTypes.FLOAT;
+            case "Boolean": return GlobalTypes.BOOLEAN;
+            case "Character": return GlobalTypes.CHAR;
+            case "Byte": return GlobalTypes.BYTE;
+            case "Short": return GlobalTypes.SHORT;
+        }
+        return this;
 	}
 	public default boolean anyMatch(Predicate<IJType> predicate) {
 		return predicate.test(this) || getInnerTypes().stream().anyMatch(f->f.anyMatch(predicate));
 	}
 	public default boolean isPrimitiveObjectType(){
-		return is(Integer.class, Long.class, Double.class, Float.class, Boolean.class, Character.class, Byte.class, Short.class);
+		switch (getSimpleName()){
+	  		case "Integer":
+	        case "Long":
+	        case "Double":
+	        case "Float":
+	        case "Boolean":
+	        case "Character":
+	        case "Byte":
+	        case "Short":
+	        	 return true;
+        	 default:
+        		 return false;
+	        			 
+	    }
 	}
 	
 	public default IJType createListType(boolean nullable) {
@@ -131,7 +142,7 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	
 	@Override
 	public default int compareTo(IJType o) {
-		return getName().compareTo(o.getName());
+		return name().compareTo(o.name());
 	}
 	public default boolean isIterable() {
 		return isSubclassOf(Iterable.class);
@@ -216,8 +227,8 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 			}
 
 			@Override
-			public String getName() {
-				return IJType.this.getName();
+			public String name() {
+				return IJType.this.name();
 			}
 
 			@Override
@@ -236,7 +247,7 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 			}
 
 			@Override
-			public List<JAnnotation> getAnnotations() {
+			public Map<String, JAnnotation> getAnnotations() {
 				return IJType.this.getAnnotations();
 			}
 

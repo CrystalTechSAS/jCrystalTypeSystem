@@ -4,20 +4,29 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import jcrystal.types.loaders.IJClassLoader;
+import jcrystal.types.vars.AbsJAccessor;
 
-public class JVariable implements JIAnnotable, Serializable{
+public class JVariable implements JIAnnotable, Serializable, JIVariable{
 	private static final long serialVersionUID = 2251144499897925662L;
 	public IJType type;
 	public String name;
+	public String value;
 	public int modifiers;
-	List<JAnnotation> annotations= new ArrayList<>();
+	Map<String, JAnnotation> annotations = new TreeMap<>();
 	public String staticDefaultValue;
 	private JIAnnotable parent;
+	public JVariable(IJType type, String name) {
+		this(0, type, name);
+	}
+	public JVariable(IJType type, String name, String value) {
+		this(0, type, name);
+		this.value = value; 
+	}
 	public JVariable(int modifiers, IJType type, String name) {
 		this.modifiers = modifiers;
 		this.type = type;
@@ -37,7 +46,7 @@ public class JVariable implements JIAnnotable, Serializable{
 		modifiers = f.getModifiers();
 		Arrays.stream(f.getAnnotations()).sorted((c1,c2)->c1.annotationType().getName().compareTo(c2.annotationType().getName())).forEach(a->{
 			try {
-				annotations.add(new JAnnotation(a));				
+				annotations.put(a.annotationType().getName(), new JAnnotation(a));				
 			}catch (Exception e) {
 				throw new NullPointerException();
 			}
@@ -49,7 +58,7 @@ public class JVariable implements JIAnnotable, Serializable{
 				Object defaultValue = f.get(null);
 				if(defaultValue != null) {
 					staticDefaultValue = defaultValue.toString();
-					if(getType().isPrimitive()) {
+					if(type().isPrimitive()) {
 						if(f.getType() == long.class && defaultValue.equals(new Long(0)))
 							staticDefaultValue = null;		
 						else if(f.getType() == int.class && defaultValue.equals(new Integer(0)))
@@ -58,7 +67,7 @@ public class JVariable implements JIAnnotable, Serializable{
 							staticDefaultValue = null;
 						else if(f.getType() == boolean.class && defaultValue.equals(new Boolean(false)))
 							staticDefaultValue = null;
-					}else if(getType().isEnum()) {
+					}else if(type().isEnum()) {
 						staticDefaultValue = f.getType().getSimpleName()+"."+f.getType().getMethod("name").invoke(defaultValue).toString();
 					}else if(defaultValue.equals(new Long(0)))
 						staticDefaultValue = null;		
@@ -76,31 +85,22 @@ public class JVariable implements JIAnnotable, Serializable{
 		}
 	}
 	@Override
-	public List<JAnnotation> getAnnotations() {
+	public Map<String, JAnnotation> getAnnotations() {
 		return annotations;
 	}
-	public IJType getType() {
+	@Override
+	public IJType type() {
 		return type;
 	}
-	public String getName() {
+	public void type(IJType type) {
+		this.type = type;
+	}
+	@Override
+	public String name() {
 		return name;
 	}
-	public boolean isPublic() {
-		return Modifier.isPublic(modifiers);
-	}
-	public boolean isStatic() {
-		return Modifier.isStatic(modifiers);
-	}
-	public boolean isFinal() {
-		return Modifier.isFinal(modifiers);
-	}
-	public boolean isPrivate() {
-		return Modifier.isPrivate(modifiers);
-	}
-	public boolean isProtected() {
-		return Modifier.isProtected(modifiers);
-	}
-	public int getModifiers() {
+	@Override
+	public int modifiers() {
 		return modifiers;
 	}
 	@Override
@@ -109,5 +109,23 @@ public class JVariable implements JIAnnotable, Serializable{
 		if(ret == null && parent != null)
 			ret = parent.getJAnnotationWithAncestorCheck(name);
 		return ret;
+	}
+	private AbsJAccessor accessor;
+	public AbsJAccessor accessor() {
+		if(accessor == null)
+			accessor = new AbsJAccessor() {
+				@Override
+				public IJType type() {
+					return JVariable.this.type();
+				}
+				
+				@Override
+				public String name() {
+					return JVariable.this.name();
+				}
+				
+				
+			};
+		return accessor.asField().prefix(null);
 	}
 }

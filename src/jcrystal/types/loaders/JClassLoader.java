@@ -48,7 +48,7 @@ public class JClassLoader implements IJClassLoader, Serializable{
 		if(ret == null) {
 			Package p = Package.getPackage(name);
 			if(p!=null)//TODO: potential bug.
-				loadedPackages.put(name, ret = new JPackage(p));
+				loadedPackages.put(name, ret = new JPackage(this, p));
 		}
 		return ret;
 	}
@@ -60,7 +60,7 @@ public class JClassLoader implements IJClassLoader, Serializable{
 	
 	@Override
 	public void load(IJType type) {
-		loadedClasses.put(type.getName(), type);
+		loadedClasses.put(type.name(), type);
 	}
 	@Override
 	public IJClassLoader getParentClassLoader() {
