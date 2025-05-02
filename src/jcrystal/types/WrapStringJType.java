@@ -31,6 +31,10 @@ public class WrapStringJType implements Serializable, IJType{
 		throw new NullPointerException(type);
 	}
 	@Override
+	public boolean isInterface() {
+		throw new NullPointerException(type);
+	}
+	@Override
 	public boolean isPrimitive() {
 		throw new NullPointerException(type);
 	}
@@ -78,7 +82,7 @@ public class WrapStringJType implements Serializable, IJType{
 	}
 	@Override
 	public Map<String, JAnnotation> getAnnotations() {
-		return Collections.EMPTY_MAP;
+		return Collections.emptyMap();
 	}
 	@Override
 	public boolean isAnnotationPresent(Class<? extends Annotation> clase) {

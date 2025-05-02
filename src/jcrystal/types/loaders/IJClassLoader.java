@@ -8,13 +8,16 @@ import jcrystal.types.IJType;
 import jcrystal.types.JClass;
 import jcrystal.types.JPackage;
 import jcrystal.types.JType;
+import jcrystal.types.locals.ILocalType;
 
 public interface IJClassLoader {
 	public IJType load(Class<?> clase, Type genericType);
+	public IJType load(ILocalType type);
 	public TreeMap<String, IJType> getLoadedClasses();
 	public TreeMap<String, JPackage> getLoadedPackages();
 	
 	public IJType forName(String name);
+	public IJType forSimpleName(String name);
 	public JPackage packageForName(String name);
 	
 	public default boolean subclassOf(IJType jtype, Class<?> clase) {

@@ -1,17 +1,18 @@
 package jcrystal.types;
 
 import java.io.File;
-import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import jcrystal.types.convertions.AnnotationResolverHolder;
 import jcrystal.types.loaders.IJClassLoader;
+import jcrystal.types.locals.ILocalClass;
+import jcrystal.types.locals.ILocalType;
+import jcrystal.types.locals.JavaLocalClass;
 
-public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serializable{
+public class JClass extends JType implements JIHasModifiers {
 	private static final long serialVersionUID = 143568675432L;
 	boolean isStatic;
 	boolean inner;
@@ -28,32 +29,35 @@ public class JClass extends JType implements JIAnnotable, JIHasModifiers, Serial
 		super(jClassLoader, clase);
 		modifiers = clase.getModifiers();
 	}
+	public JClass(IJClassLoader jClassLoader, ILocalType clase){
+		super(jClassLoader, clase);
+		modifiers = clase.getModifiers();
+	}
+	
 	public JClass load(Class<?> clase) {
+		return this.load(new JavaLocalClass(clase, null));
+	}
+	public JClass load(ILocalClass clase) {
 		isEnum = clase.isEnum();
 		isStatic = Modifier.isStatic(clase.getModifiers());
-		inner = clase.isMemberClass();
-		if(clase.getSuperclass() != null)
-			superClass = jClassLoader.load(clase.getSuperclass(), clase.getGenericSuperclass());
-		if(clase.getDeclaringClass() != null)
-			declaringClass = jClassLoader.load(clase.getDeclaringClass(), null);
-		Class<?>[] ifaces = clase.getInterfaces();
-		for(int e = 0; e < ifaces.length; e++)
-			interfaces.add(jClassLoader.load(ifaces[e], clase.getGenericInterfaces()[e]));
-		if(clase.getPackage() != null)
-			packageName = clase.getPackage().getName();
-		Arrays.stream(clase.getDeclaredFields()).forEach(f->{
+		inner = clase.inner();
+		superClass = jClassLoader.load(clase.superClass());
+		declaringClass = jClassLoader.load(clase.declaringClass());
+		for(ILocalType type : clase.interfaces())
+			interfaces.add(jClassLoader.load(type));
+		packageName = clase.getPackageName();
+		clase.attributes().forEach(f->{
 			attributes.add(new JVariable(jClassLoader, this, f));
 		});
-		Arrays.stream(clase.getConstructors()).forEach(c->{
+		clase.constructors().forEach(c->{
 			constructors.add(new JMethod(jClassLoader, this, c));
 		});
-		Arrays.stream(clase.getDeclaredMethods()).forEach(m->{
-			if(!m.getName().startsWith("lambda$"))
-				methods.add(new JMethod(jClassLoader, this, m));
+		clase.methods().forEach(m->{
+			methods.add(new JMethod(jClassLoader, this, m));
 		});
-		loadAnnotations(clase.getAnnotations());
+		loadAnnotations(clase.annotations());
 		if(isEnum)
-			enumData = new JEnum(jClassLoader, clase);
+			enumData = new JEnum(jClassLoader, clase.enumData());
 		return this;
 	}
 	@Override

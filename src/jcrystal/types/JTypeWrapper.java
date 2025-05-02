@@ -48,6 +48,10 @@ public class JTypeWrapper implements JIAnnotable, Serializable, IJType{
 		return wrappedType.isArray();
 	}
 	@Override
+	public final boolean isInterface() {
+		return wrappedType.isInterface();
+	}
+	@Override
 	public final boolean isPrimitive() {
 		return wrappedType.isPrimitive();
 	}

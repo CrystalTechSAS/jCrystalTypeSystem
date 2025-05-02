@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import jcrystal.types.loaders.IJClassLoader;
+import jcrystal.types.locals.ILocalVariable;
 import jcrystal.types.vars.AbsJAccessor;
 
 public class JVariable implements JIAnnotable, Serializable, JIVariable{
@@ -32,57 +33,26 @@ public class JVariable implements JIAnnotable, Serializable, JIVariable{
 		this.type = type;
 		this.name = name;
 	}
-	public JVariable(IJClassLoader jClassLoader, JMethod parent, Parameter p) {
+	public JVariable(IJClassLoader jClassLoader, JMethod parent, ILocalVariable p) {
 		this.parent = parent;
 		name = p.getName();
-		type = jClassLoader.load(p.getType(), p.getParameterizedType());
+		type = jClassLoader.load(p.type());
 		modifiers = p.getModifiers();
-		loadAnnotations(p.getAnnotations());
+		loadAnnotations(p.annotations());
 	}
-	public JVariable(IJClassLoader jClassLoader, JClass parent, Field f) {
+	public JVariable(IJClassLoader jClassLoader, JClass parent, ILocalVariable f) {
 		this.parent = parent;
 		name = f.getName();
-		type = jClassLoader.load(f.getType(), f.getGenericType());
+		type = jClassLoader.load(f.type());
 		modifiers = f.getModifiers();
-		Arrays.stream(f.getAnnotations()).sorted((c1,c2)->c1.annotationType().getName().compareTo(c2.annotationType().getName())).forEach(a->{
+		Arrays.stream(f.annotations()).sorted((c1,c2)->c1.annotationType().getName().compareTo(c2.annotationType().getName())).forEach(a->{
 			try {
 				annotations.put(a.annotationType().getName(), new JAnnotation(a));				
 			}catch (Exception e) {
 				throw new NullPointerException();
 			}
 		});
-		
-		if(Modifier.isStatic(modifiers)) {
-			try {
-				f.setAccessible(true);
-				Object defaultValue = f.get(null);
-				if(defaultValue != null) {
-					staticDefaultValue = defaultValue.toString();
-					if(type().isPrimitive()) {
-						if(f.getType() == long.class && defaultValue.equals(new Long(0)))
-							staticDefaultValue = null;		
-						else if(f.getType() == int.class && defaultValue.equals(new Integer(0)))
-							staticDefaultValue = null;
-						else if(f.getType() == double.class && defaultValue.equals(new Double(0)))
-							staticDefaultValue = null;
-						else if(f.getType() == boolean.class && defaultValue.equals(new Boolean(false)))
-							staticDefaultValue = null;
-					}else if(type().isEnum()) {
-						staticDefaultValue = f.getType().getSimpleName()+"."+f.getType().getMethod("name").invoke(defaultValue).toString();
-					}else if(defaultValue.equals(new Long(0)))
-						staticDefaultValue = null;		
-					else if(defaultValue.equals(new Integer(0)))
-						staticDefaultValue = null;
-					else if(defaultValue.equals(new Double(0)))
-						staticDefaultValue = null;
-					else if(defaultValue.equals(new Boolean(false)))
-						staticDefaultValue = null;
-
-				}
-				if(defaultValue != null && f.getType().isEnum())
-					defaultValue = f.getType().getSimpleName()+"."+f.getType().getMethod("name").invoke(defaultValue);
-			} catch (Exception e) {}
-		}
+		staticDefaultValue = f.staticDefaultValue();
 	}
 	@Override
 	public Map<String, JAnnotation> getAnnotations() {

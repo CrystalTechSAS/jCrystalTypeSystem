@@ -6,8 +6,11 @@ import java.lang.reflect.Type;
 import java.util.TreeMap;
 
 import jcrystal.types.IJType;
+import jcrystal.types.JClass;
 import jcrystal.types.JPackage;
 import jcrystal.types.JType;
+import jcrystal.types.locals.ILocalClass;
+import jcrystal.types.locals.ILocalType;
 
 public class JClassLoader implements IJClassLoader, Serializable{
 
@@ -16,6 +19,7 @@ public class JClassLoader implements IJClassLoader, Serializable{
 	public IJClassLoader parentClassLoader;
 	
 	TreeMap<String, IJType> loadedClasses = new TreeMap<>();
+	TreeMap<String, IJType> loadedSimpleNameClasses = new TreeMap<>();
 	TreeMap<String, JPackage> loadedPackages = new TreeMap<>();
 	
 	@Override
@@ -40,9 +44,16 @@ public class JClassLoader implements IJClassLoader, Serializable{
 			return ret;
 		}
 	}
+
 	public IJType forName(String name) {
 		return loadedClasses.get(name);
 	}
+
+	@Override
+	public IJType forSimpleName(String name) {
+		return loadedSimpleNameClasses.get(name);
+	}
+
 	public JPackage packageForName(String name) {
 		JPackage ret = loadedPackages.get(name);
 		if(ret == null) {
@@ -60,10 +71,37 @@ public class JClassLoader implements IJClassLoader, Serializable{
 	
 	@Override
 	public void load(IJType type) {
-		loadedClasses.put(type.name(), type);
+		if(type == null)
+			return;
+		if(!loadedClasses.containsKey(type.name())) {
+			loadedClasses.put(type.name(), type);
+			loadedSimpleNameClasses.put(type.getSimpleName(), type);
+		}
+	}
+	@Override
+	public IJType load(ILocalType type) {
+		if(type == null)
+			return null;
+		if(!loadedClasses.containsKey(type.getName())) {
+			JType newType = new JType(this, type);
+			loadedClasses.put(type.getName(), newType);
+			loadedSimpleNameClasses.put(type.getSimpleName(), newType);
+		}
+		return loadedClasses.get(type.getName());
+	}
+	public IJType load(ILocalClass type) {
+		if(type == null)
+			return null;
+		JClass newType = new JClass(this, type);
+		newType.load(type);
+		loadedClasses.put(type.getName(), newType);
+		loadedSimpleNameClasses.put(type.getSimpleName(), newType);
+		return loadedClasses.get(type.getName());
 	}
 	@Override
 	public IJClassLoader getParentClassLoader() {
 		return parentClassLoader;
 	}
+
+
 }

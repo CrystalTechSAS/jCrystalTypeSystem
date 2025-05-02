@@ -27,6 +27,8 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 	
 	JClass tryResolve();
 
+	boolean isInterface();
+
 	boolean isEnum();
 
 	boolean isArray();
@@ -179,6 +181,11 @@ public interface IJType extends Comparable<IJType>, JIAnnotable{
 			@Override
 			public boolean isArray() {
 				return IJType.this.isArray();
+			}
+
+			@Override
+			public boolean isInterface() {
+				return IJType.this.isInterface();
 			}
 
 			@Override

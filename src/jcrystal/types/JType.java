@@ -12,6 +12,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import jcrystal.types.loaders.IJClassLoader;
+import jcrystal.types.locals.ILocalType;
+import jcrystal.types.locals.JavaLocalType;
 
 public class JType implements Serializable, IJType{
 	private static final long serialVersionUID = -875202507362620017L;
@@ -20,6 +22,7 @@ public class JType implements Serializable, IJType{
 	public String simpleName;
 	public String packageName;
 	public boolean isArray;
+	public boolean isInterface;
 	public boolean isEnum;
 	boolean primitive;
 	boolean nullable;
@@ -32,21 +35,7 @@ public class JType implements Serializable, IJType{
 	 */
 	public boolean isClientType;
 	public JType(IJClassLoader jClassLoader, Class<?> f, Type genericType) {
-		this(jClassLoader, f);
-		if(!isArray && !isEnum && genericType != null) {
-			if(genericType instanceof  ParameterizedType) {
-				for(Type tipo : ((ParameterizedType) genericType).getActualTypeArguments()) {
-					if(tipo instanceof ParameterizedType) {
-						ParameterizedType pType = (ParameterizedType)tipo;
-						innerTypes.add(jClassLoader.load((Class<?>)pType.getRawType(), pType));
-					}
-					else if(tipo instanceof WildcardType);
-					else {
-						innerTypes.add(jClassLoader.load((Class<?>)tipo, null));
-					}
-				}	
-			}
-		}
+		this(jClassLoader, new JavaLocalType(f, genericType));
 	}
 	JType(IJClassLoader jClassLoader){
 		this.jClassLoader = jClassLoader;
@@ -64,23 +53,22 @@ public class JType implements Serializable, IJType{
 		}
 	}
 	public JType(IJClassLoader jClassLoader, Class<?> f) {
+		this(jClassLoader, new JavaLocalType(f, null));
+	}
+	public JType(IJClassLoader jClassLoader, ILocalType localType) {
 		this.jClassLoader = jClassLoader;
-		name = f.getName();
-		simpleName = f.getSimpleName();
-		if(f.getPackage() != null)
-			packageName = f.getPackage().getName();
-		isArray = f.isArray();
-		isEnum = f.isEnum();
-		primitive = f.isPrimitive();
-		nullable = !f.isPrimitive();
-		if(!name.startsWith("java.")) {
-			if(isArray)
-				innerTypes.add(new JType(jClassLoader, f.getComponentType(), (Type)null));
-			else{
-				CodeSource src = f.getProtectionDomain().getCodeSource();
-				isClientType = src != null && src.getLocation().toString().endsWith("WEB-INF/classes/");
-			}
-		}
+		name = localType.getName();
+		simpleName = localType.getSimpleName();
+		packageName = localType.getPackageName();
+		isArray = localType.isArray();
+		isInterface = localType.isInterface();
+		isEnum = localType.isEnum();
+		primitive = localType.isPrimitive();
+		nullable = !localType.isPrimitive();
+		isClientType = localType.isClientType();
+		innerTypes = localType.getInnerTypes().stream().map(t->{
+			return (IJType)new JType(jClassLoader, t);
+		}).collect(Collectors.toList());
 	}
 	public List<IJType> getInnerTypes() {
 		return innerTypes;
@@ -104,6 +92,8 @@ public class JType implements Serializable, IJType{
 	public final boolean isPrimitive() {
 		return primitive;
 	}
+	@Override
+	public final boolean isInterface() { return isInterface;}
 	@Override
 	public IJClassLoader classLoader() {
 		return jClassLoader;

@@ -1,15 +1,14 @@
 package jcrystal.types;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import jcrystal.types.loaders.IJClassLoader;
+import jcrystal.types.locals.ILocalMethod;
+import jcrystal.types.locals.ILocalVariable;
 
 public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	private static final long serialVersionUID = -202642428369017987L;
@@ -22,27 +21,16 @@ public class JMethod implements JIAnnotable, JIHasModifiers, Serializable{
 	public Map<String, JAnnotation> annotations= new TreeMap<>();
 	public JClass declaringClass;
 	
-	public JMethod(IJClassLoader jClassLoader, JClass declaringClass, Method m) {
+	public JMethod(IJClassLoader jClassLoader, JClass declaringClass, ILocalMethod m) {
 		this.declaringClass = declaringClass;
 		modifiers = m.getModifiers();
 		name = m.getName();
-		returnType = jClassLoader.load(m.getReturnType(), m.getGenericReturnType());
-		isVoid = m.getReturnType() == Void.TYPE;
-		for(Parameter p : m.getParameters()) {
+		returnType = jClassLoader.load(m.getReturnType());
+		isVoid = m.isVoid();
+		for(ILocalVariable p : m.params()) {
 			params.add(new JVariable(jClassLoader, this, p));
 		}
-		loadAnnotations(m.getAnnotations());
-	}
-	public JMethod(IJClassLoader jClassLoader, JClass declaringClass, Constructor<?> m) {
-		this.declaringClass = declaringClass;
-		modifiers = m.getModifiers();
-		name = m.getName();
-		returnType = null;
-		isVoid = true;
-		for(Parameter p : m.getParameters()) {
-			params.add(new JVariable(jClassLoader, this, p));
-		}
-		loadAnnotations(m.getAnnotations());
+		loadAnnotations(m.annotations());
 	}
 	public int getModifiers() {
 		return modifiers;
